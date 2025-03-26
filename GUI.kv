@@ -1,17 +1,45 @@
-<ScreenOne>:
-    BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: "This is Screen One"
-        Button:
-            text: "Go to Screen Two"
-            on_release: app.root.current = "screen2"
 
-<ScreenTwo>:
+<MainMenu>
+    name: Main
+    button:
+        text: "Hej med dig"
+        on_release: root.manager.current = 'BGfjern'
+        background_color: 0,1,0,1
+
+
+
+<RemBG>:
+    name: BGfjern
+    orientation: "vertical"
+
+    Label:
+        id: file_label
+        text: "Vælg et billede eller en mappe"
+        size_hint_y: 0.1
+
     BoxLayout:
-        orientation: 'vertical'
-        Label:
-            text: "This is Screen Two"
+        size_hint_y: 0.4
+        Image:
+            id: before_image
+            source: ''
+        Image:
+            id: after_image
+            source: ''
+
+    ProgressBar:
+        id: progress
+        max: 100
+        value: 0
+        size_hint_y: 0.05
+
+    BoxLayout:
+        size_hint_y: 0.1
         Button:
-            text: "Go to Screen One"
-            on_release: app.root.current = "screen1"
+            text: "Vælg et billede"
+            on_release: root.select_file()
+        Button:
+            text: "Vælg en mappe"
+            on_release: root.select_folder()
+        Button:
+            text: "Process"
+            on_release: root.start_processing()
