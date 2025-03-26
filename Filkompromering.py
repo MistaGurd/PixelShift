@@ -1,1 +1,5 @@
-GSWIN64 -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+
+class FilKompromering(Screen):
+    pass
