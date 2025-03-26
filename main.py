@@ -8,14 +8,18 @@ from BGfjernelse import RemBG
 # from Filkompromering import...
 # from Formatkonvertering import
 # from PDF_Merge import
+
+
+
 class MainMenu(Screen):
     pass
 class PixelShiftApp(App):
     def build(self):
         Window.maximize()  # Får programmet til at åbne i Windowded borderless
         sm = ScreenManager()  # Variabel for håndtering af start-skærm, og resultatskærm
-        sm.add_widget(MainMenu(name="Hovedmenu"))
-        sm.add_widget(RemBG(name="Baggrundsfjernelse"))
+        sm.add_widget(MainMenu())
+        sm.add_widget(RemBG())
+        sm.transition = SwapTransition()
         return sm
 
 

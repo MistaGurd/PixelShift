@@ -1,37 +1,17 @@
-ScreenManager:
-    MainMenu:
-    RemBG:
-<RemBG>:
-    orientation: "vertical"
-
-    Label:
-        id: file_label
-        text: "Vælg et billede eller en mappe"
-        size_hint_y: 0.1
-
+<ScreenOne>:
     BoxLayout:
-        size_hint_y: 0.4
-        Image:
-            id: before_image
-            source: ''
-        Image:
-            id: after_image
-            source: ''
+        orientation: 'vertical'
+        Label:
+            text: "This is Screen One"
+        Button:
+            text: "Go to Screen Two"
+            on_release: app.root.current = "screen2"
 
-    ProgressBar:
-        id: progress
-        max: 100
-        value: 0
-        size_hint_y: 0.05
-
+<ScreenTwo>:
     BoxLayout:
-        size_hint_y: 0.1
+        orientation: 'vertical'
+        Label:
+            text: "This is Screen Two"
         Button:
-            text: "Vælg et billede"
-            on_release: root.select_file()
-        Button:
-            text: "Vælg en mappe"
-            on_release: root.select_folder()
-        Button:
-            text: "Process"
-            on_release: root.start_processing()
+            text: "Go to Screen One"
+            on_release: app.root.current = "screen1"
