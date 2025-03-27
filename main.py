@@ -3,7 +3,7 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.core.window import Window
 from kivy.lang.builder import Builder
-#Builder.load_file('GUI.kv')
+
 
 from BGfjernelse import BGFjern
 
