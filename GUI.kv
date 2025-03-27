@@ -1,12 +1,12 @@
-
-<MainMenu>
+<MainMenu>:
     name: 'hovedmenu'
     Button:
-        text: 'Pls virk'
-        on_release: app.root.current = "BGfjern"
+        text: "Pls virk"
+        on_release: root.manager.current = "bgfjern"
         background_color: 0,1,0,1
 
-<BGfjern>:
+<ImageProcessor>:
+    name: 'bgfjern'
     orientation: "vertical"
 
     Label:

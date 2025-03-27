@@ -1,11 +1,8 @@
-from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.core.window import Window
-
 import os
 import threading
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -20,8 +17,11 @@ from PIL import Image
 #   Pillow (PIL forkortet) til at håndtere billedfiler, samt konvertere
 #   eksempelvis fra AVIF til PNG
 
+from kivy.lang.builder import Builder
+Builder.load_file('GUI.kv')
 
-class BGfjern(BoxLayout):
+
+class ImageProcessor(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -174,3 +174,15 @@ class BGfjern(BoxLayout):
         except Exception as fejl:
             fejl_besked = f"Fejl: {str(fejl)}"
             Clock.schedule_once(lambda dt: self.update_file_info("Fejl", fejl_besked), 0)
+
+
+class BGFjern(Screen):  # Class som konverterer ImageProcessor til at være en skærm
+                        # som kan blive kaldt på i main.py
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tk_root = tk.Tk()
+        self.tk_root.withdraw()
+
+        # Create and add ImageProcessor instance
+        self.processor = ImageProcessor()
+        self.add_widget(self.processor)
