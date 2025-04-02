@@ -1,9 +1,7 @@
 import os
 import threading
-from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
-from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.core.window import Window
 from tkinter import filedialog
