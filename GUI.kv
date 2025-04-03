@@ -2,7 +2,7 @@
     name: 'hovedmenu'
     Button:
         text: "Pls virk"
-        on_release: root.manager.current = "bgfjern"
+        on_release: root.manager.current = "pdf_merger"
         background_color: 0,1,0,1
 
 <ImageProcessor>:
@@ -42,3 +42,82 @@
             on_release: root.start_processing()
 <PDF_Merge>:
     name: 'pdf_merger'
+    pdf_list_container: pdf_list_container
+    status_label: status_label
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: 'PDF Merger'
+            font_size: 24
+            size_hint_y: None
+            height: 50
+
+        Button:
+            text: 'Add PDFs'
+            size_hint_y: None
+            height: 40
+            on_release: root.add_pdfs()
+
+        ScrollView:
+            size_hint: (1, 0.6)
+            GridLayout:
+                id: pdf_list_container
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+            Button:
+                text: 'Merge PDFs'
+                on_release: root.merge_pdfs()
+            Button:
+                text: 'Clear List'
+                on_release: root.clear_list()
+
+        Label:
+            id: status_label
+            text: ''
+            size_hint_y: None
+            height: 30
+
+<PDFEntry>:
+    size_hint_y: None
+    height: 40
+    BoxLayout:
+        size_hint_y: None
+        height: 40
+        spacing: 5
+
+        Button:
+            text: 'UP'
+            size_hint_x: None
+            width: 40
+            on_release: root.parent.parent.parent.parent.move_up(root.entry_index)
+
+        Button:
+            text: 'NED'
+            size_hint_x: None
+            width: 40
+            on_release: root.parent.parent.parent.parent.move_down(root.entry_index)
+
+        Label:
+            id: file_label
+            text: ''
+            size_hint_x: 0.7
+            ellipsize: 'right'
+
+        Button:
+            text: 'X'
+            size_hint_x: None
+            width: 40
+            on_release:
+                root.parent.parent.parent.parent.selected_pdfs.pop(root.entry_index)
+                root.parent.parent.parent.parent.update_pdf_list()

@@ -4,10 +4,10 @@ from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.core.window import Window
 
 from BGfjernelse import BGFjern
+from PDF_Merge import PDF_Merge
 
-
-# Overstående er import af de klasse, som hver Python fil har. Hver klasse,
-# er hver sin del af koden
+# Overstående er import af de klasser, som hver Python fil har. Hver klasse,
+# er hver sin del (her en screen) af koden
 class MainMenu(Screen):
     pass
 
