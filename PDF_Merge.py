@@ -11,7 +11,7 @@ Builder.load_file('GUI.kv')
 class PDFNummer(Screen):
     Start_nummer = NumericProperty(0)
 
-class PDF_Merge(Screen):
+#class PDF_Merge(Screen):
 
 class PDF_Merge(Screen):
     pdf_list_container = ObjectProperty(None)
@@ -35,7 +35,7 @@ class PDF_Merge(Screen):
     def update_pdf_list(self):
         self.pdf_list_container.clear_widgets()
         for i, path in enumerate(self.selected_pdfs):
-            entry = PDFEntry()
+            entry = PDFNummer()
             entry.entry_index = i
             entry.ids.file_label.text = os.path.basename(path)
             self.pdf_list_container.add_widget(entry)

@@ -1,13 +1,18 @@
-# Diverse imports
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.core.window import Window
+from kivy.uix.boxlayout import BoxLayout
+# Diverse imports
 
 from BGfjernelse import BGFjern
 from PDF_Merge import PDF_Merge
 
-# Overstående er import af de klasser, som hver Python fil har. Hver klasse,
-# er hver sin del (her en screen) af koden
+# Overstående er import af de klasser, som hver Python fil har.
+# Hver klasse, er hver sin del (her en screen) af koden
+
+from kivy.lang import Builder
+Builder.load_file('GUI.kv') # Indlæsning af interface
+
 class MainMenu(Screen):
     pass
 

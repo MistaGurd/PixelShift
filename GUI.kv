@@ -88,7 +88,7 @@
             size_hint_y: None
             height: 30
 
-<PDFEntry>:
+<PDFNummer>:
     size_hint_y: None
     height: 40
     BoxLayout:
@@ -97,15 +97,15 @@
         spacing: 5
 
         Button:
-            text: 'UP'
-            size_hint_x: None
-            width: 40
+            size_hint: None, None
+            size: 40, 40
+            background_normal: 'ICONS/UpArrow40P.png'
             on_release: root.parent.parent.parent.parent.move_up(root.entry_index)
 
         Button:
-            text: 'NED'
-            size_hint_x: None
-            width: 40
+            size_hint: None, None
+            size: 40, 40
+            background_normal: 'ICONS/DownArrow40P.png'
             on_release: root.parent.parent.parent.parent.move_down(root.entry_index)
 
         Label:

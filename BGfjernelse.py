@@ -15,9 +15,6 @@ from PIL import Image
 #   Pillow (PIL forkortet) til at håndtere billedfiler, samt konvertere
 #   eksempelvis fra AVIF til PNG
 
-from kivy.lang.builder import Builder
-Builder.load_file('GUI.kv')
-
 
 class ImageProcessor(BoxLayout):
 
