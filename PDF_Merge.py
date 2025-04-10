@@ -30,7 +30,7 @@ class PDF_Merge(Screen):
         if filepaths:
             self.selected_pdfs.extend(filepaths)
             self.update_pdf_list()
-
+ 
     def update_pdf_list(self):
         self.pdf_list_container.clear_widgets()
         for i, path in enumerate(self.selected_pdfs):

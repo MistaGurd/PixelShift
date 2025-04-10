@@ -1,3 +1,6 @@
+# Denne kode stammer fra gruppen eksamensprojekt i programmering.
+# Det originale repo- findes her: https://github.com/MistaGurd/PixelWipe
+
 import os
 import threading
 from kivy.uix.boxlayout import BoxLayout
@@ -16,52 +19,55 @@ from PIL import Image
 #   eksempelvis fra AVIF til PNG
 
 
-class ImageProcessor(BoxLayout):
+class PixelWipe(BoxLayout): # Hovedklasse, som matcher med klassen i kivy koden
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs): # Standard-kaldbare-attributes defineres her
         super().__init__(**kwargs)
         self.selected_path = None
         self.output_folder = None
-        self.processed_images = []
+        # ^ standardvædier i den forstand, at programmet ikke har valgt et billede, eller en mappe, idet programmet starter.
+        self.processed_images = [] # Laver en tom liste, hvor output ryger ind
 
-        # Set default output folder to "Downloads"
-        self.default_output_folder = os.path.join(os.path.expanduser("~"), "Overførsler")
+        self.default_output_folder = os.path.join(os.path.expanduser("~"), "Downloads") # Når man behandler et billede (el. mappe)
+                                                                                          # så er downloads standard-output, med mindre
+                                                                                          # brugeren vælger en placering
 
-        # Hide Tkinter root window
         self.tk_root = tk.Tk()
         self.tk_root.withdraw()
+        # ^ Lader os anvende tkinter med Stifinder uden tk-pop-up vinduer
 
-        # Enable drag & drop
-        Window.bind(on_dropfile=self.on_drop)
+        Window.bind(on_dropfile=self.on_drop) # Når filer bliver drag & dropped, skal det køre on_drop funktionen
 
-    def on_drop(self, window, file_path):
-        """ Handles drag & drop for files or folders """
-        path = file_path.decode("utf-8")
+    def on_drop(self, window, file_path): # Funktion, som håndterer drag-and-drop
+        path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
+                                          # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
 
-        if os.path.isdir(path):  # If it's a folder
+        if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
+            self.selected_path = path
+            self.update_file_info(self.selected_path, "Output: Ikke valgt") # Standardtekst, indtil man vælger outputsti
+
+        elif path.lower().endswith((".png", ".jpg", ".jpeg",".webp")): # Hvis det er en enkel fil i følgende format
+            self.reset_images() # Sørger for et rent canvas, altså, ikke nogen gamle processed billeder
             self.selected_path = path
             self.update_file_info(self.selected_path, "Output: Ikke valgt")
-        elif path.lower().endswith((".png", ".jpg", ".jpeg",".webp")):
-            self.reset_images()
-            self.selected_path = path
-            self.update_file_info(self.selected_path, "Output: Ikke valgt")
-            self.show_image(self.selected_path, self.ids.before_image)
+            self.show_image(self.selected_path, self.ids.before_image) # Viser før og efter billede
+
         elif path.lower().endswith((".avif")): # Konvertering af AVIF til PNG
-            img = Image.open(path) # Åbner filen med Image.open
-            img.save(path,"PNG") # Gemmer som PNG
+            img = Image.open(path) # Åbner filen med Image.open fra Pillow
+            img.save(path,"PNG") # Gemmer path som AVIF filen konverteret til en png
             self.reset_images()
             self.selected_path = path
             self.update_file_info(self.selected_path, "Output: Ikke Valgt")
             self.show_image(self.selected_path, self.ids.before_image)
 
     def reset_images(self):
-        """ Clears the Before & After images when selecting a new file or folder """
         self.ids.before_image.source = ''
         self.ids.after_image.source = ''
+        # Opdaterer self til at være tom (som hermed giver os et blank canvas, når vi vælger nye filer/mapper)
 
-    def select_file(self):
-        """ Opens a file dialog to select an image """
-        file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.webp;*.avif")])
+    def select_file(self): # Funktion til når man vælger et billede vha. knappen i programmets UI
+        file_path = filedialog.askopenfilename(filetypes=[("Billedformater", "*.png;*.jpg;*.jpeg;*.webp;*.avif")])
+        # Åbner Windows dialogvindue, som kun tillader, at man vælger overstående filformater
         if file_path:
             self.reset_images()
             self.selected_path = file_path
@@ -69,27 +75,26 @@ class ImageProcessor(BoxLayout):
             self.show_image(self.selected_path, self.ids.before_image)
 
 
-    def select_folder(self):
-        """ Opens a folder dialog to select a folder """
-        folder_path = filedialog.askdirectory()
+    def select_folder(self): # Funktion til når man vælger en mappe  vha. knappen i programmets UI
+        folder_path = filedialog.askdirectory() # askdirectory gør at Windows dialogvinduet kun viser mapper og ikke enkelte filer
         if folder_path:
             self.reset_images()
             self.selected_path = folder_path
             self.update_file_info(self.selected_path, "Output: Ikke valgt")
 
     def ask_output_folder(self):
-        """ Asks user for an output folder when clicking Process, defaults to Downloads """
-        folder = filedialog.askdirectory(title="Select Output Folder")
-        return folder if folder else self.create_unique_output_folder(self.default_output_folder)
+        folder = filedialog.askdirectory(title="Vælg mappesti")
+        return folder if folder else self.create_unique_output_folder(self.default_output_folder) # Hvis brugeren ikke selv vælger en mappe
+                                                                                                  # så kører create_unique_output_folder
+                                                                                                  # som laver en mappe i Downloads
 
     def create_unique_output_folder(self, base_folder):
-        """ Creates a unique folder for processed images if one exists """
-        output_folder = os.path.join(base_folder, "Processed_Images")
-        counter = 1
+        output_folder = os.path.join(base_folder, "Behandlede billeder") # Laver en mappe, hvis brugeren ikke vælger en
+        counter = 1  # Programmet navngiver filer, og starter med billede 1
         while os.path.exists(output_folder):
-            output_folder = os.path.join(base_folder, f"Processed_Images_{counter}")
-            counter += 1
-        os.makedirs(output_folder)
+            output_folder = os.path.join(base_folder, f"Billednummer_{counter}") # her navngives de
+            counter += 1 # og tæller op for hvert billede
+        os.makedirs(output_folder) # Opretter mappen
         return output_folder
 
     def update_file_info(self, selected, saving):
@@ -99,77 +104,78 @@ class ImageProcessor(BoxLayout):
     def show_image(self, image_path, widget):
         # Lambda bruges til at få programmet til at vente med at opdatere widget før
         # process er klar - og clock..._once sørger for, at det kun sker én gang. Ellers vil output
-        # image bare være blankt, da programmet ikke kan process billedet "instant"
+        # image bare være blank, da programmet ikke kan process billedet "instant"
         # https://kivy.org/doc/stable/api-kivy.clock.html
         Clock.schedule_once(lambda dt: setattr(widget, 'source', image_path), 0)
 
     def start_processing(self):
-        """ Asks for output folder and starts processing """
         if not self.selected_path:
             self.update_file_info("Ingen fil eller mappe valgt!", "")
             return
+        # Hvis man prøver at køre programmet, uden at have valgt en fil eller mappe
+        # så vil koden returnere "Ingen fil eller mappe valgt!"
 
-        self.output_folder = self.ask_output_folder()
-        self.processed_images = []
+        self.output_folder = self.ask_output_folder() # Definerer outputstien
+        self.processed_images = [] # Starter med en tom liste af billeder
 
-        # Reset progress bar correctly
         Clock.schedule_once(lambda dt: setattr(self.ids.progress, 'value', 0), 0)
+        # Sørger for, at progressbaren stemmer overens med de behandlede biller
+        # ids.progress kalder på progressBar i Kivy koden
 
-        if os.path.isfile(self.selected_path):
+        if os.path.isfile(self.selected_path): # Hvis det er en fil
             threading.Thread(target=self.process_image, args=(self.selected_path,), daemon=True).start()
-        elif os.path.isdir(self.selected_path):
+        elif os.path.isdir(self.selected_path): # Hvis det er en mappe
             threading.Thread(target=self.process_folder, daemon=True).start()
+        # Kort fortalt: Threading sørger for multitasking i programmet. Lidt på samme måde som en computers CPU
+
+        # Når programmet kører, er det en tråd (eller én opgave). Når brugeren
+        # derefter vælger at fjerne baggrunden, skal programmet både køre
+        # UI, men også rembg til at fjerne baggrunden. Threading lader programmet
+        # opdele arbejdet, således at UI stadig er responsiv.
 
     def process_image(self, image_path):
-        """ Removes the background from a single image and saves it properly """
         try:
-            # Open the image and ensure it's in RGBA mode
-            input_img = Image.open(image_path)
-            if input_img.mode != "RGBA":
-                input_img = input_img.convert("RGBA")
+            input_img = Image.open(image_path) # Pillow åbner billedet
+            if input_img.mode != "RGBA": # Tjekker, om billedet er i alm. RGB farver og alpha (gennemsigtighed/styrke) via !=
+                input_img = input_img.convert("RGBA") # Hvis ikke, anvender vi .convert til at sørge for, at billedet er i det rigtige format
+                                                      # Især Alpha kanalen er vigtig her, ellers er det ikke muligt at have en gennemsigtig baggrund.
 
-            # Process the image
-            output_img = remove(input_img)
+            output_img = remove(input_img) # .remove stammer fra rembg, og gemmer her billedet uden baggrund.
 
-            # Ensure output path ends with .png
-            output_filename = os.path.splitext(os.path.basename(image_path))[0] + "ingen_baggrund.png"
-            output_path = os.path.join(self.output_folder, output_filename)
+            output_filename = os.path.splitext(os.path.basename(image_path))[0] + "_ingen_baggrund.png" # Tager det originale filnavn, og tilføjer "ingen_baggrund"
+            output_path = os.path.join(self.output_folder, output_filename) # Sørger for at ligge det i outputstien
 
-            # Save as PNG to prevent corruption
-            output_img.save(output_path, format="PNG")
+            output_img.save(output_path, format="PNG") # Gemmer i PNG filformat med .save fra Pillow
 
-            # Show Before image
-            self.show_image(image_path, self.ids.before_image)
-
-            # Show processed After image
-            self.show_image(output_path, self.ids.after_image)
+            self.show_image(image_path, self.ids.before_image) # Opdaterer show_image widget i Kivy til at være billedet før behandling
+            self.show_image(output_path, self.ids.after_image) # Opdaterer show_image widget i Kivy til at være billedet efter behandling
 
             Clock.schedule_once(lambda dt: self.update_file_info(image_path, output_path), 0)
-        except Exception as error:
-            error_message = f"Error: {str(error)}"
-            Clock.schedule_once(lambda dt: setattr(self.ids.file_label, 'text', error_message), 0)
+            # Når programmet er færdig med at behandle et billede, opdaterer den update_file_info
+        except Exception as error: # Hvis en fejl forekommer
+            error_message = f"Error: {str(error)}" # Udskriver programmet Error... også fejlen
+            Clock.schedule_once(lambda dt: setattr(self.ids.file_label, 'text', error_message), 0) # Opdaterer ids.file_label til at vise fejlbeskeden
 
     def process_folder(self):
-        """ Processes all images in a folder and saves them in a new folder """
         try:
             files = [f for f in os.listdir(self.selected_path) if f.lower().endswith(('.png', '.jpg', '.jpeg','.webp','.avif'))]
+            # Når en mappe er valgt, laver den en liste af de filer, som er i formatet png, jpg, jpeg, webp og avif.
             if not files:
                 Clock.schedule_once(lambda dt: self.update_file_info("Ingen billeder fundet!", ""), 0)
-                return
+                return # Hvis programmet ikke finder nogle kompatible filer, udskriver den en error til brugeren
 
-            for index, file in enumerate(files):
+            for index, file in enumerate(files): # Hver fil bliver gemt som et index hvor enumerate sørger for at nummerere dem
                 input_path = os.path.join(self.selected_path, file)
-                self.process_image(input_path)
+                self.process_image(input_path) # Kører hvert billede i mappen gennem process_image funktionen
 
-                # Update progress bar dynamically
-                progress_value = int(((index + 1) / len(files)) * 100)
-                Clock.schedule_once(lambda dt: setattr(self.ids.progress, 'value', progress_value), 0)
+                progress_value = int(((index + 1) / len(files)) * 100) # Ud fra længden af files, altså, filerne i den valgte mappe
+                                                                       # defineres procentdelen hver fil udgør
+                Clock.schedule_once(lambda dt: setattr(self.ids.progress, 'value', progress_value), 0) # Opdaterer progressbar ud fra hvor langt i mappen programmet er
 
-            Clock.schedule_once(lambda dt: self.update_file_info(self.selected_path, self.output_folder), 0)
+            Clock.schedule_once(lambda dt: self.update_file_info(self.selected_path, self.output_folder), 0) # Når færdig, opdateres update_file_info
         except Exception as fejl:
             fejl_besked = f"Fejl: {str(fejl)}"
             Clock.schedule_once(lambda dt: self.update_file_info("Fejl", fejl_besked), 0)
-
 
 class BGFjern(Screen):  # Class som konverterer ImageProcessor til at være en skærm
                         # som kan blive kaldt på i main.py
@@ -179,5 +185,5 @@ class BGFjern(Screen):  # Class som konverterer ImageProcessor til at være en s
         self.tk_root.withdraw()
 
         # Create and add ImageProcessor instance
-        self.processor = ImageProcessor()
+        self.processor = PixelWipe()
         self.add_widget(self.processor)
