@@ -9,9 +9,6 @@ import os
 
 class PDFNummer(Screen):
     Start_nummer = NumericProperty(0)
-
-#class PDF_Merge(Screen):
-
 class PDF_Merge(Screen):
     pdf_list_container = ObjectProperty(None)
     status_label = ObjectProperty(None)
@@ -30,7 +27,7 @@ class PDF_Merge(Screen):
         if filepaths:
             self.selected_pdfs.extend(filepaths)
             self.update_pdf_list()
- 
+
     def update_pdf_list(self):
         self.pdf_list_container.clear_widgets()
         for i, path in enumerate(self.selected_pdfs):
