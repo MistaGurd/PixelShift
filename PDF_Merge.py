@@ -5,8 +5,7 @@ import tkinter as tk
 from tkinter import filedialog # Windows dialog vindue
 import os
 
-from kivy.lang import Builder
-Builder.load_file('GUI.kv')
+
 
 class PDFNummer(Screen):
     Start_nummer = NumericProperty(0)

@@ -1,7 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.core.window import Window
-from kivy.uix.boxlayout import BoxLayout
+from kivy.lang import Builder
 # Diverse imports
 
 from BGfjernelse import BGFjern
@@ -10,14 +10,15 @@ from PDF_Merge import PDF_Merge
 # Overstående er import af de klasser, som hver Python fil har.
 # Hver klasse, er hver sin del (her en screen) af koden
 
-from kivy.lang import Builder
-Builder.load_file('GUI.kv') # Indlæsning af interface
+
+ # Indlæsning af interface
 
 class MainMenu(Screen):
     pass
 
 class PixelShiftApp(App):
     def build(self):
+        Builder.load_file('GUI.kv')
         Window.maximize()
         sm = ScreenManager()
         sm.add_widget(MainMenu(name="hovedmenu"))
