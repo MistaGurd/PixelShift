@@ -1,10 +1,12 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
+import tkinter as tk
 
 class FilKomprimering(Screen):
     pass
 
     def __init__(self):
-        pass
+        self.tk_root = tk.Tk()
+        self.tk_root.withdraw()
 
     def file_select(self):
         pass

@@ -1,12 +1,12 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.lang.builder import Builder
-Builder.load_file('GUI.kv')
+import tkinter as tk
 
 class FormatKonvertering(Screen):
     pass
 
     def __init__(self):
-        pass
+        self.tk_root = tk.Tk()
+        self.tk_root.withdraw()
 
     def file_select(self):
         pass
