@@ -8,10 +8,12 @@ import os
 
 
 class PDFNummer(Screen):
-    Start_nummer = NumericProperty(0)
-class PDF_Merge(Screen):
-    pdf_list_container = ObjectProperty(None)
-    status_label = ObjectProperty(None)
+    Start_nummer = NumericProperty() # Lader Kivy automatisk opdaterer,
+                                     # hvis der bliver fortaget ændringer til filerne
+
+class PDF_Merging(Screen):
+    pdf_list_container = ObjectProperty()
+    status_label = ObjectProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -21,8 +23,8 @@ class PDF_Merge(Screen):
 
     def add_pdfs(self):
         filepaths = filedialog.askopenfilenames(
-            title="Select PDF files",
-            filetypes=[("PDF Files", "*.pdf")]
+            title="Vælg PDF filer",
+            filetypes=[("PDF Fil", "*.pdf")]
         )
         if filepaths:
             self.selected_pdfs.extend(filepaths)
@@ -47,30 +49,35 @@ class PDF_Merge(Screen):
             self.update_pdf_list()
 
     def merge_pdfs(self):
-        if len(self.selected_pdfs) < 2:
-            self.status_label.text = "Error: Select at least 2 PDFs!"
+        if len(self.selected_pdfs) < 2: # Sørger for, at der mindst er valgt to PDF filre
+            self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!" # Hvis ikke, gives denne meddelelse
             return
 
         output_path = filedialog.asksaveasfilename(
-            title="Save Merged PDF",
+            title="Vælg destinationssti og navn til merged PDF",
             defaultextension=".pdf",
             filetypes=[("PDF Files", "*.pdf")]
         )
+        # Vha. tkinter kan destinationsstien vælges, inklusiv navn.
+        # Sørger selv for, at formattet bliver PDF
         if not output_path:
             return
 
         try:
-            merger = PyPDF4.PdfFileMerger()
+            merger = PyPDF4.PdfFileMerger() # Variabel af PyPDF4
             for pdf in self.selected_pdfs:
-                merger.append(pdf)
-            merger.write(output_path)
-            merger.close()
-            self.status_label.text = f"Success: Merged to {os.path.basename(output_path)}"
+                merger.append(pdf) # Appender de valgter PDF'er
+            merger.write(output_path) # Gemmer den nye merged fil med write fra PyPDF4
+            merger.close() # Rydder chachen
+            self.status_label.text = f"Success: Merged PDF gemt i {os.path.basename(output_path)}"
             self.selected_pdfs = []
             self.update_pdf_list()
+            # Sørger automatisk for at ryde listen når PDFer er blevet merged
+            # Klar til brug igen, med det samme!
         except Exception as e:
-            self.status_label.text = f"Error: {str(e)}"
+            self.status_label.text = f"Fejl: {str(e)}" # Hvis fejl skulle opstå, kan brugeren her se, hvad der gik galt
 
     def clear_list(self):
         self.selected_pdfs = []
         self.update_pdf_list()
+        # Rydder listen
