@@ -24,7 +24,7 @@ class PDF_Merging(Screen):
 
         Window.bind(on_dropfile=self.on_drop)
 
-    def on_drop(self,Window, file_path):
+    def on_drop(self,window, file_path):
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
                                           # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
 
