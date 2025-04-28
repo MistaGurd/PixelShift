@@ -99,9 +99,9 @@
 
         Button:
             size_hint: None, None
-            size: 40, 40
-            background_normal: 'ICONS/UpArrow40P.png'
-            on_release: root.parent.parent.parent.parent.move_up(root.entry_index)
+            size: 40, 40 # Størrelse på 40x40 pixels
+            background_normal: 'ICONS/UpArrow40P.png' # Anvender billede som ikon
+            on_release: root.parent.parent.parent.parent.move_up(root.entry_index) # Parent.parent (...) lader os kalde på funktioner i PDF_Merging
 
         Button:
             size_hint: None, None

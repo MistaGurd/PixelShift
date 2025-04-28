@@ -1,26 +1,45 @@
 from kivy.uix.screenmanager import Screen # Til screen manager i Main
 from kivy.properties import ObjectProperty, NumericProperty
+from kivy.core.window import Window
 import PyPDF4
 import tkinter as tk
 from tkinter import filedialog # Windows dialog vindue
 import os
 
 
-
 class PDFNummer(Screen):
     Start_nummer = NumericProperty() # Lader Kivy automatisk opdaterer,
                                      # hvis der bliver fortaget ændringer til filerne
-
 class PDF_Merging(Screen):
     pdf_list_container = ObjectProperty()
     status_label = ObjectProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self.root_tk = tk.Tk()
         self.root_tk.withdraw()
+
         self.selected_pdfs = []
 
+        Window.bind(on_dropfile=self.on_drop)
+
+    def on_drop(self,Window, file_path):
+        path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
+                                          # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
+
+        if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
+            pdf_in_dir = [
+                os.path.join(path,f)
+                for f in os.listdir(path)
+                if f.lower().endswith(".pdf")
+            ]
+            self.selected_pdfs.extend(pdf_in_dir)
+
+        elif path.lower().endswith((".pdf")): # Hvis det er en enkel fil i følgende format
+            self.selected_pdfs.append(path)
+
+        self.update_pdf_list()
     def add_pdfs(self):
         filepaths = filedialog.askopenfilenames(
             title="Vælg PDF filer",
