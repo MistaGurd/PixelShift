@@ -1,10 +1,15 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.properties import ObjectProperty, NumericProperty
 import tkinter as tk
+
+class FileCompressHandle(Screen):
+    Start_nummer = NumericProperty()
 
 class FilKomprimering(Screen):
     pass
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.tk_root = tk.Tk()
         self.tk_root.withdraw()
 
@@ -17,11 +22,8 @@ class FilKomprimering(Screen):
     def drag_and_drop(self):
         pass
 
-    def Single_Komprimering(self):
+    def file_selection(self):
         pass
 
-    def Mappe_Komprimering(self):
-        pass
-
-    def Refresh_Selection(self):
+    def clear_list(self):
         pass

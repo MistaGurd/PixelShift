@@ -6,6 +6,7 @@ from kivy.lang import Builder
 
 from BGfjernelse import BGFjern
 from PDF_Merge import PDF_Merging
+from Filkompromering import FilKomprimering
 
 # Overstående er import af de klasser, som hver Python fil har.
 # Hver klasse, er hver sin del (her en screen) af koden
@@ -21,6 +22,7 @@ class PixelShiftApp(App):
         sm.add_widget(MainMenu(name="hovedmenu"))
         sm.add_widget(BGFjern(name="bgfjern"))
         sm.add_widget(PDF_Merging(name="pdf_merger"))
+        sm.add_widget(FilKomprimering(name="filecompress"))
         sm.transition = SwapTransition()
         return sm
 

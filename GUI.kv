@@ -2,7 +2,7 @@
     name: 'hovedmenu'
     Button:
         text: "Pls virk"
-        on_release: root.manager.current = "pdf_merger"
+        on_release: root.manager.current = "filecompress"
         background_color: 0,1,0,1
 
 <PixelWipe>:
@@ -122,3 +122,81 @@
             on_release:
                 root.parent.parent.parent.parent.selected_pdfs.pop(root.entry_index)
                 root.parent.parent.parent.parent.update_pdf_list()
+
+<FilKomprimering>:
+    name: 'filecompress'
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: 'Filkomprimering'
+            font_size: 24
+            size_hint_y: None
+            height: 50
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 10
+            size_hint_y: None
+            height: 40
+
+            Button:
+                text: 'Tilføj én fil'
+                size_hint_y: None
+                height: 40
+                on_release: root.file_select()
+            Button:
+                text: 'Tilføj en mappe'
+                size_hint_y: None
+                height: 40
+                on_release: root.folder_select()
+
+        ScrollView:
+            size_hint: (1, 0.6)
+            GridLayout:
+                id: file_list_container
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+
+        BoxLayout:
+            size_hint_y: None
+            height: 40
+            spacing: 10
+            Button:
+                text: 'Komprimere'
+                on_release: root.merge_pdfs()
+            Button:
+                text: 'Ryd liste'
+                on_release: root.clear_list()
+
+        Label:
+            id: status_label
+            text: ''
+            size_hint_y: None
+            height: 30
+
+<FileCompressHandle>:
+    size_hint_y: None
+    height: 40
+    BoxLayout:
+        size_hint_y: None
+        height: 40
+        spacing: 5
+
+        Label:
+            id: file_label
+            text: ''
+            size_hint_x: 0.7
+            ellipsize: 'right'
+
+        Button:
+            text: 'X'
+            size_hint_x: None
+            width: 40
+            on_release:
+                root.parent.parent.parent.parent.selected_files.pop(root.entry_index)
+                root.parent.parent.parent.parent.file_selection()
