@@ -24,7 +24,7 @@ class PDF_Merging(Screen):
 
         Window.bind(on_dropfile=self.on_drop)
 
-    def on_drop(self,window, file_path):
+    def on_drop(self, window, file_path):
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
                                           # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
 
@@ -68,7 +68,7 @@ class PDF_Merging(Screen):
             self.update_pdf_list()
 
     def merge_pdfs(self):
-        if len(self.selected_pdfs) < 2: # Sørger for, at der mindst er valgt to PDF filre
+        if len(self.selected_pdfs) < 2: # Sørger for, at der mindst er valgt to PDF filer
             self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!" # Hvis ikke, gives denne meddelelse
             return
 
