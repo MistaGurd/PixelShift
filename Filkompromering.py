@@ -1,29 +1,117 @@
+import os
+import locale
+
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty, NumericProperty
+from kivy.core.window import Window
+
 import tkinter as tk
+from tkinter import filedialog
+
+import PIL as pil
+import ghostscript
 
 class FileCompressHandle(Screen):
-    Start_nummer = NumericProperty()
+    Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
+                                      # hvis der bliver fortaget ændringer til filerne
+
 
 class FilKomprimering(Screen):
-    pass
+    file_list_container = ObjectProperty()
+    status_label = ObjectProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.tk_root = tk.Tk()
-        self.tk_root.withdraw()
+
+        self.root_tk = tk.Tk()
+        self.root_tk.withdraw()
+
+        self.selected_files = []
+
+        Window.bind(on_dropfile=self.on_drop)
+
+    def on_drop(self, window, file_path):
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif")
+        path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
+        # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
+
+        if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
+            files_in_dir = [
+                os.path.join(path, f)
+                for f in os.listdir(path)
+                if f.lower().endswith(formater)
+            ]
+            self.selected_files.extend(files_in_dir)
+
+        elif path.lower().endswith(formater):  # Hvis det er en enkel fil i følgende format
+            self.selected_files.append(path)
+
+        self.update_file_list()
 
     def file_select(self):
-        pass
+        filepaths = filedialog.askopenfilenames(
+            title="Vælg billeder og PDF filer",
+            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf*")]
+        )
+        if filepaths:
+            self.selected_files.extend(filepaths)
+            self.update_file_list()
 
     def folder_select(self):
-        pass
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif")
+        filepaths = filedialog.askdirectory()
 
-    def drag_and_drop(self):
-        pass
+        if os.path.isdir(filepaths):  # Hvis det er en mappe (dir for directory/mappe)
+            files_in_dir = [
+                os.path.join(filepaths, f)
+                for f in os.listdir(filepaths)
+                if f.lower().endswith(formater)
+            ]
+            self.selected_files.extend(files_in_dir)
+        elif filepaths.lower().endswith(formater):  # Hvis det er en enkel fil i følgende format
+            self.selected_files.append(filepaths)
 
-    def file_selection(self):
-        pass
+        self.update_file_list()
+
+
+    def update_file_list(self):
+        self.file_list_container.clear_widgets()
+        for i, path in enumerate(self.selected_files):
+            entry = FileCompressHandle()
+            entry.entry_index = i
+            entry.ids.file_label.text = os.path.basename(path)
+            self.file_list_container.add_widget(entry)
+
+    def compress(self):
+        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt to PDF filer
+            self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
+            return
+
+        output_path = filedialog.asksaveasfilename(
+            title="Vælg destinationssti og navn til merged PDF",
+            defaultextension=".pdf",
+            filetypes=[("PDF Files", "*.pdf")]
+        )
+        # Vha. tkinter kan destinationsstien vælges, inklusiv navn.
+        # Sørger selv for, at formattet bliver PDF
+        if not output_path:
+            return
+
+        try:
+            merger = PyPDF4.PdfFileMerger()  # Variabel af PyPDF4
+            for pdf in self.selected_files:
+                merger.append(pdf)  # Appender de valgter PDF'er
+            merger.write(output_path)  # Gemmer den nye merged fil med write fra PyPDF4
+            merger.close()  # Rydder chachen
+            self.status_label.text = f"Success: Merged PDF gemt i {os.path.basename(output_path)}"
+            self.selected_files = []
+            self.update_file_list()
+            # Sørger automatisk for at ryde listen når PDFer er blevet merged
+            # Klar til brug igen, med det samme!
+        except Exception as e:
+            self.status_label.text = f"Fejl: {str(e)}"  # Hvis fejl skulle opstå, kan brugeren her se, hvad der gik galt
 
     def clear_list(self):
-        pass
+        self.selected_files = []
+        self.update_file_list()
+        # Rydder listen

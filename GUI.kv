@@ -125,6 +125,7 @@
 
 <FilKomprimering>:
     name: 'filecompress'
+    file_list_container: file_list_container
 
     BoxLayout:
         orientation: 'vertical'
@@ -168,7 +169,7 @@
             spacing: 10
             Button:
                 text: 'Komprimere'
-                on_release: root.merge_pdfs()
+                on_release: root.compressing()
             Button:
                 text: 'Ryd liste'
                 on_release: root.clear_list()
@@ -199,4 +200,4 @@
             width: 40
             on_release:
                 root.parent.parent.parent.parent.selected_files.pop(root.entry_index)
-                root.parent.parent.parent.parent.file_selection()
+                root.parent.parent.parent.parent.update_file_list()
