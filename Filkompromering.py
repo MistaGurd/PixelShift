@@ -8,8 +8,10 @@ from kivy.core.window import Window
 import tkinter as tk
 from tkinter import filedialog
 
-import PIL as pil
+from PIL import Image
 import ghostscript
+from pywin.framework.help import helpIDMap
+
 
 class FileCompressHandle(Screen):
     Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
@@ -27,6 +29,8 @@ class FilKomprimering(Screen):
         self.root_tk.withdraw()
 
         self.selected_files = []
+
+        self.default_output_folder = os.path.join(os.path.expanduser("~"), "Downloads")
 
         Window.bind(on_dropfile=self.on_drop)
 
@@ -79,39 +83,53 @@ class FilKomprimering(Screen):
         for i, path in enumerate(self.selected_files):
             entry = FileCompressHandle()
             entry.entry_index = i
-            entry.ids.file_label.text = os.path.basename(path)
+            entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
             self.file_list_container.add_widget(entry)
 
+
     def compress(self):
-        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt to PDF filer
+        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
             self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
             return
 
-        output_path = filedialog.asksaveasfilename(
-            title="Vælg destinationssti og navn til merged PDF",
-            defaultextension=".pdf",
-            filetypes=[("PDF Files", "*.pdf")]
-        )
-        # Vha. tkinter kan destinationsstien vælges, inklusiv navn.
-        # Sørger selv for, at formattet bliver PDF
-        if not output_path:
-            return
+        output_path = filedialog.askdirectory(title="Vælg mappesti")
 
         try:
-            merger = PyPDF4.PdfFileMerger()  # Variabel af PyPDF4
-            for pdf in self.selected_files:
-                merger.append(pdf)  # Appender de valgter PDF'er
-            merger.write(output_path)  # Gemmer den nye merged fil med write fra PyPDF4
-            merger.close()  # Rydder chachen
-            self.status_label.text = f"Success: Merged PDF gemt i {os.path.basename(output_path)}"
-            self.selected_files = []
-            self.update_file_list()
-            # Sørger automatisk for at ryde listen når PDFer er blevet merged
-            # Klar til brug igen, med det samme!
-        except Exception as e:
-            self.status_label.text = f"Fejl: {str(e)}"  # Hvis fejl skulle opstå, kan brugeren her se, hvad der gik galt
+            formater = (".jpg", ".jpeg", ".png", ".webp", ".avif")
+            for path in self.selected_files:
+                if path.lower().endswith(formater):
+                    try:
+                        Open_img = Image.open(path)
+                        width, height = Open_img.size
+                        new_width = int(width*0.75)
+                        new_height = int(height*0.75)
+                        resized_img = Open_img.resize((new_width,new_height))
+
+                        name, ext = os.path.splitext(path)
+                        file_save_name = f"Small_index {ext}"
+                        resized_img.save(file_save_name)
+                    except  Exception as e:
+                        print(e)
+
+                elif path.lower().endswith((".pdf")):
+                    print("tbc")
+
+        except  Exception as e:
+            print(e)
+
+
+
+
+
+
+    def image_compress(self):
+        pass
+
+    def pdf_compress(self):
+        pass
 
     def clear_list(self):
         self.selected_files = []
         self.update_file_list()
         # Rydder listen
+
