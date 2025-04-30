@@ -9,9 +9,8 @@ import tkinter as tk
 from tkinter import filedialog
 
 from PIL import Image
+import pillow_avif
 import ghostscript
-from pywin.framework.help import helpIDMap
-
 
 class FileCompressHandle(Screen):
     Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
@@ -31,6 +30,7 @@ class FilKomprimering(Screen):
         self.selected_files = []
 
         self.default_output_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+        self.output_folder = None
 
         Window.bind(on_dropfile=self.on_drop)
 
@@ -86,16 +86,29 @@ class FilKomprimering(Screen):
             entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
             self.file_list_container.add_widget(entry)
 
+    def ask_output_folder(self):
+        folder = filedialog.askdirectory(title="Vælg mappesti")
+        return folder if folder else self.create_unique_output_folder(self.default_output_folder)
+
+    def create_unique_output_folder(self, base_folder):
+        output_folder = os.path.join(base_folder, "PixelShifted") # Laver en mappe, hvis brugeren ikke vælger en
+        counter = 1  # Programmet navngiver filer, og starter med billede 1
+        while os.path.exists(output_folder):
+            output_folder = os.path.join(base_folder, f"PixelShifted_{counter}") # her navngives de
+            counter += 1 # og tæller op for hvert billede
+        os.makedirs(output_folder) # Opretter mappen
+        return output_folder
 
     def compress(self):
         if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
-            self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
+            self.ids.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
             return
 
-        output_path = filedialog.askdirectory(title="Vælg mappesti")
-
         try:
-            formater = (".jpg", ".jpeg", ".png", ".webp", ".avif")
+            self.compressed_files = []
+            raw_size = sum(os.path.getsize(path) for path in self.selected_files) / 1000000
+            self.output_folder = self.ask_output_folder()
+            formater = (".jpg", ".jpeg", ".png", ".webp",".avif")
             for path in self.selected_files:
                 if path.lower().endswith(formater):
                     try:
@@ -105,31 +118,47 @@ class FilKomprimering(Screen):
                         new_height = int(height*0.75)
                         resized_img = Open_img.resize((new_width,new_height))
 
-                        name, ext = os.path.splitext(path)
-                        file_save_name = f"Small_index {ext}"
-                        resized_img.save(file_save_name)
-                    except  Exception as e:
-                        print(e)
+                        file_name_index = "Compressed - " + os.path.basename(path)
+                        file_name_index_output = os.path.join(self.output_folder, file_name_index)
+
+                        resized_img.save(file_name_index_output)
+                        self.compressed_files.append(file_name_index_output)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
 
                 elif path.lower().endswith((".pdf")):
-                    print("tbc")
+                    try:
+                        output_name = f"Compressed - {os.path.basename(path)}"
+                        output_path = os.path.join(self.output_folder, output_name)
+                        args = [
+                            "gs",
+                            "-sDEVICE=pdfwrite",
+                            "-dCompatibilityLevel=1.4",
+                            "-dPDFSETTINGS=/prepress",
+                            "-dNOPAUSE",
+                            "-dQUIET",
+                            "-dBATCH",
+                            f"-sOutputFile={output_path}",
+                            path
+                        ]
+                        ghostscript.Ghostscript(*args)
+                        self.compressed_files.append(output_path)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
 
-        except  Exception as e:
-            print(e)
+        except Exception as e:
+            self.ids.status_label.text = f"Error: {str(e)}"
+
+        try:
+            compressed_size = sum(os.path.getsize(path) for path in self.compressed_files)/1000000
+            size_diff = raw_size-compressed_size
+            self.ids.status_label.text = f"Succes: Fil/filer reduceret med {size_diff:.2f} MB."
 
 
-
-
-
-
-    def image_compress(self):
-        pass
-
-    def pdf_compress(self):
-        pass
+        except Exception as e:
+            self.ids.status_label.text = f"Error: {str(e)}"
 
     def clear_list(self):
         self.selected_files = []
         self.update_file_list()
         # Rydder listen
-
