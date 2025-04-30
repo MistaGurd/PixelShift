@@ -1,9 +1,50 @@
 <MainMenu>:
     name: 'hovedmenu'
-    Button:
-        text: "Pls virk"
-        on_release: root.manager.current = "filecompress"
-        background_color: 0,1,0,1
+    BoxLayout:
+        orientation: 'horizontal'
+
+        BoxLayout:
+            size_hint_x: .03
+            padding: 10
+            spacing: 10
+            MDGridLayout:
+                rows: 5
+                pos_hint: {"top": 0.6}
+
+                spacing: 10
+
+                MDIconButton:
+                    id: nav_icon0
+                    style: "filled"
+                    icon: "home"
+                    #ripple_scale: 1
+                    on_release: root.manager.current = "hovedmenu"
+                MDIconButton:
+                    id: nav_icon1
+                    icon: "home"
+                    #ripple_scale: 0
+                    on_release: root.manager.current = "bgfjern"
+                MDIconButton:
+                    id: nav_icon2
+                    icon: "home"
+                    #ripple_scale: 0
+                    on_release: root.manager.current = "pdf_merger"
+                MDIconButton:
+                    id: nav_icon3
+                    icon: "home"
+                    #ripple_scale: 0
+                    on_release: root.manager.current = "filecompress"
+                MDIconButton:
+                    id: nav_icon4
+                    icon: "home"
+                    #ripple_scale: 0
+                    on_release: root.manager.current = "filecompress"
+
+        Button:
+            text: "Pls virk"
+            on_release: root.manager.current = "filecompress"
+            background_color: 0,1,0,1
+
 
 <PixelWipe>:
     name: 'bgfjern'

@@ -2,6 +2,8 @@ from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivymd.app import MDApp
+
 # Diverse imports
 
 from BGfjernelse import BGFjern
@@ -15,7 +17,11 @@ from Formatkonvertering import FormatKonverter
 class MainMenu(Screen):
     pass
 
-class PixelShiftApp(App):
+class PixelShiftApp(MDApp):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
     def build(self):
         Builder.load_file('GUI.kv')
         Window.maximize()
