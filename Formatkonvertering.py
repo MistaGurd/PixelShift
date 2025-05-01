@@ -15,10 +15,7 @@ import pillow_avif
 from pdf2docx import Converter
 from docx2pdf import convert as d2pdfc # as d2pdfc for ikke at programmet ikke forveksler pdf2docx og docx2pdf
 
-
 from docx import Document
-
-
 
 
 class FileConvertHandle(Screen):
