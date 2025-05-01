@@ -17,7 +17,7 @@ from PIL import Image
 #   Tkinter til at kunne anvende Windows dialog vindue
 #   Pillow (PIL forkortet) til at håndtere billedfiler, samt konvertere
 #   eksempelvis fra AVIF til PNG
-class PixelWipe(BoxLayout): # Hovedklasse, som matcher med klassen i kivy koden
+class PixelWipe(Screen): # Hovedklasse, som matcher med klassen i kivy koden
 
     def __init__(self, **kwargs): # Standard-kaldbare-attributes defineres her
         super().__init__(**kwargs)
@@ -168,22 +168,3 @@ class PixelWipe(BoxLayout): # Hovedklasse, som matcher med klassen i kivy koden
             fejl_besked = f"Fejl: {str(fejl)}"
             Clock.schedule_once(lambda dt: self.update_file_info("Fejl", fejl_besked), 0)
 
-class BGFjern(Screen):  # Class som konverterer ImageProcessor til at være en skærm
-                        # som kan blive kaldt på i main.py
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.tk_root = tk.Tk()
-        self.tk_root.withdraw()
-
-        self.processor = PixelWipe()
-        self.add_widget(self.processor)
-
-    def build(self):
-        sm = ScreenManager()
-        sm.add_widget(MainMenu(name="hovedmenu"))
-        sm.add_widget(BGFjern(name="bgfjern"))
-        sm.add_widget(PDF_Merging(name="pdf_merger"))
-        sm.add_widget(FilKomprimering(name="filecompress"))
-        #sm.add_widget(FormatKonverter(name="formatkonvert"))
-        sm.transition = NoTransition()
-        return sm

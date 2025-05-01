@@ -8,10 +8,10 @@ import tkinter as tk
 
 
 # Diverse imports
-from BGfjernelse import BGFjern
+from BGfjernelse import PixelWipe
 from PDF_Merge import PDF_Merging
 from Filkompromering import FilKomprimering
-from Formatkonvertering import FormatKonverter
+from Formatkonvertering import FormatConvert
 
 # Overstående er import af de klasser, som hver Python fil har.
 # Hver klasse, er hver sin del (her en screen) af koden
@@ -30,10 +30,10 @@ class PixelShiftApp(MDApp):
         Window.maximize()
         sm = ScreenManager()
         sm.add_widget(MainMenu(name="hovedmenu"))
-        sm.add_widget(BGFjern(name="bgfjern"))
+        sm.add_widget(PixelWipe(name="bgfjern"))
         sm.add_widget(PDF_Merging(name="pdf_merger"))
         sm.add_widget(FilKomprimering(name="filecompress"))
-        sm.add_widget(FormatKonverter(name="formatkonvert"))
+        sm.add_widget(FormatConvert(name="formatkonvert"))
         sm.transition = NoTransition()
         return sm
 

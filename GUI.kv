@@ -105,7 +105,7 @@
             on_release: root.manager.current = "filecompress"
             background_color: 0,1,0,1
 
-<BGFjern>:
+<PixelWipe>:
     name: 'bgfjern'
     BoxLayout:
         orientation: 'horizontal'
@@ -241,49 +241,145 @@
     name: 'pdf_merger'
     pdf_list_container: pdf_list_container
     status_label: status_label
-
     BoxLayout:
-        orientation: 'vertical'
-        padding: 10
-        spacing: 10
-
-        Label:
-            text: 'PDF Merger'
-            font_size: 24
-            size_hint_y: None
-            height: 50
-
-        Button:
-            text: 'Tilføj PDF filer'
-            size_hint_y: None
-            height: 40
-            on_release: root.add_pdfs()
-
-        ScrollView:
-            size_hint: (1, 0.6)
-            GridLayout:
-                id: pdf_list_container
-                cols: 1
-                size_hint_y: None
-                height: self.minimum_height
-                spacing: 5
+        orientation: 'horizontal'
 
         BoxLayout:
-            size_hint_y: None
-            height: 40
+            padding: 10
             spacing: 10
-            Button:
-                text: 'Merge'
-                on_release: root.merge_pdfs()
-            Button:
-                text: 'Ryd liste'
-                on_release: root.clear_list()
+            MDGridLayout:
+                rows: 5 # https://www.youtube.com/watch?v=7nHHfgOXK4I
+                pos_hint: {"top": 0.7} # https://kivy.org/doc/stable/api-kivy.uix.boxlayout.html#kivy.uix.boxlayout.BoxLayout
+                spacing: 10
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "hovedmenu"
 
-        Label:
-            id: status_label
-            text: ''
-            size_hint_y: None
-            height: 30
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "home"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Hovedmenu"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "bgfjern"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "eye-remove"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Cut-out"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "pdf_merger"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "set-merge"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Merge"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "filecompress"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "arrow-collapse-vertical"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Komprimering"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "formatkonvert"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "file-replace"
+                        padding: 10
+
+
+                    MDButtonText:
+                        id: text
+                        text: "Konverter"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+            BoxLayout:
+                size_hint_x: 7.2
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+
+                Label:
+                    text: 'PDF Merger'
+                    font_size: 24
+                    size_hint_y: None
+                    height: 50
+
+                Button:
+                    text: 'Tilføj PDF filer'
+                    size_hint_y: None
+                    height: 40
+                    on_release: root.add_pdfs()
+
+                ScrollView:
+                    size_hint: (1, 0.6)
+                    GridLayout:
+                        id: pdf_list_container
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: 5
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: 40
+                    spacing: 10
+                    Button:
+                        text: 'Merge'
+                        on_release: root.merge_pdfs()
+                    Button:
+                        text: 'Ryd liste'
+                        on_release: root.clear_list()
+
+                Label:
+                    id: status_label
+                    text: ''
+                    size_hint_y: None
+                    height: 30
 
 <PDFNummer>:
     size_hint_y: None
@@ -322,59 +418,155 @@
 <FilKomprimering>:
     name: 'filecompress'
     file_list_container: file_list_container
-
     BoxLayout:
-        orientation: 'vertical'
-        padding: 10
-        spacing: 10
-
-        Label:
-            text: 'Filkomprimering'
-            font_size: 24
-            size_hint_y: None
-            height: 50
-        BoxLayout:
-            orientation: 'horizontal'
-            spacing: 10
-            size_hint_y: None
-            height: 40
-
-            Button:
-                text: 'Tilføj én fil'
-                size_hint_y: None
-                height: 40
-                on_release: root.file_select()
-            Button:
-                text: 'Tilføj en mappe'
-                size_hint_y: None
-                height: 40
-                on_release: root.folder_select()
-
-        ScrollView:
-            size_hint: (1, 0.6)
-            GridLayout:
-                id: file_list_container
-                cols: 1
-                size_hint_y: None
-                height: self.minimum_height
-                spacing: 5
+        orientation: 'horizontal'
 
         BoxLayout:
-            size_hint_y: None
-            height: 40
+            padding: 10
             spacing: 10
-            Button:
-                text: 'Komprimere'
-                on_release: root.compress()
-            Button:
-                text: 'Ryd liste'
-                on_release: root.clear_list()
+            MDGridLayout:
+                rows: 5 # https://www.youtube.com/watch?v=7nHHfgOXK4I
+                pos_hint: {"top": 0.7} # https://kivy.org/doc/stable/api-kivy.uix.boxlayout.html#kivy.uix.boxlayout.BoxLayout
+                spacing: 10
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "hovedmenu"
 
-        Label:
-            id: status_label
-            text: ''
-            size_hint_y: None
-            height: 30
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "home"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Hovedmenu"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "bgfjern"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "eye-remove"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Cut-out"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "pdf_merger"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "set-merge"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Merge"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "filecompress"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "arrow-collapse-vertical"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Komprimering"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "formatkonvert"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "file-replace"
+                        padding: 10
+
+
+                    MDButtonText:
+                        id: text
+                        text: "Konverter"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+            BoxLayout:
+                size_hint_x: 7.2
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+
+                Label:
+                    text: 'Filkomprimering'
+                    font_size: 24
+                    size_hint_y: None
+                    height: 50
+                BoxLayout:
+                    orientation: 'horizontal'
+                    spacing: 10
+                    size_hint_y: None
+                    height: 40
+
+                    Button:
+                        text: 'Tilføj én fil'
+                        size_hint_y: None
+                        height: 40
+                        on_release: root.file_select()
+                    Button:
+                        text: 'Tilføj en mappe'
+                        size_hint_y: None
+                        height: 40
+                        on_release: root.folder_select()
+
+                ScrollView:
+                    size_hint: (1, 0.6)
+                    GridLayout:
+                        id: file_list_container
+                        cols: 1
+                        size_hint_y: None
+                        height: self.minimum_height
+                        spacing: 5
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: 40
+                    spacing: 10
+                    Button:
+                        text: 'Komprimere'
+                        on_release: root.compress()
+                    Button:
+                        text: 'Ryd liste'
+                        on_release: root.clear_list()
+
+                Label:
+                    id: status_label
+                    text: ''
+                    size_hint_y: None
+                    height: 30
 
 <FileCompressHandle>:
     size_hint_y: None
