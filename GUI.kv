@@ -100,10 +100,22 @@
                         text: "Konverter"
                         pos_hint: {"center_x": .5, "center_y": .5}
 
-        Button:
-            text: "Pls virk"
-            on_release: root.manager.current = "filecompress"
-            background_color: 0,1,0,1
+
+        BoxLayout:
+            orientation: "vertical"
+            padding: 20
+            spacing: 10
+
+            Label:
+                text: "Velkommen til PixelShift!"
+                font_size: 50
+                color: 1,1,1,1
+
+            Label:
+                text: "PixelShift er et program som kan..."
+                font_size: 20
+                color: 1,1,1,1
+
 
 <PixelWipe>:
     name: 'bgfjern'
