@@ -1,126 +1,151 @@
 import os
-import subprocess
-from tkinter import filedialog
-import tkinter as tk
+import locale
+
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
+
+from pathlib import Path
+
+import tkinter as tk
+from tkinter import filedialog
+
 from PIL import Image
+import pillow_avif
 from docx import Document
 
-class FormatHandle(Screen):
-    Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
 
-class FormatConvert(Screen):
+
+class FileConvertHandle(Screen):
+    Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
+    convert_root = ObjectProperty()
+
+class FileConvert(Screen):
     file_list_container = ObjectProperty()
     status_label = ObjectProperty()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
         self.root_tk = tk.Tk()
         self.root_tk.withdraw()
+
         self.selected_files = []
+
         self.default_output_folder = os.path.join(os.path.expanduser("~"), "Downloads")
         self.output_folder = None
+
         Window.bind(on_dropfile=self.on_drop)
 
     def on_drop(self, window, file_path):
-        formater = (".pdf", ".jpg", ".jpeg", ".png", ".webp", ".avif", ".pptx", ".docx", ".txt")
-        path = file_path.decode("utf-8")
-        if os.path.isdir(path):
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".ppt",".odt")
+        path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
+        # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
+
+        if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
             files_in_dir = [
-                os.path.join(path, f) for f in os.listdir(path) if f.lower().endswith(formater)
+                os.path.join(path, f)
+                for f in os.listdir(path)
+                if f.lower().endswith(formater)
             ]
             self.selected_files.extend(files_in_dir)
-        elif path.lower().endswith(formater):
+
+        elif path.lower().endswith(formater):  # Hvis det er en enkel fil i følgende format
             self.selected_files.append(path)
+
         self.update_file_list()
 
     def file_select(self):
         filepaths = filedialog.askopenfilenames(
-            title="Vælg filer",
-            filetypes=[("Formater", "*.pdf;*.jpg;*.jpeg;*.png;*.webp;*.avif;*.pptx;*.docx;*.txt")]
+            title="Vælg mellem billeder, PDF, Docx, odt, pptx, ppt & txt",
+            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.pptx;*.ppt;*.docx;*.txt;*.odt*")]
         )
         if filepaths:
             self.selected_files.extend(filepaths)
             self.update_file_list()
 
     def folder_select(self):
-        formater = (".pdf", ".jpg", ".jpeg", ".png", ".webp", ".avif", ".pptx", ".docx", ".txt")
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".ppt",".odt")
         filepaths = filedialog.askdirectory()
-        if os.path.isdir(filepaths):
+
+        if os.path.isdir(filepaths):  # Hvis det er en mappe (dir for directory/mappe)
             files_in_dir = [
-                os.path.join(filepaths, f) for f in os.listdir(filepaths) if f.lower().endswith(formater)
+                os.path.join(filepaths, f)
+                for f in os.listdir(filepaths)
+                if f.lower().endswith(formater)
             ]
             self.selected_files.extend(files_in_dir)
+        elif filepaths.lower().endswith(formater):  # Hvis det er en enkel fil i følgende format
+            self.selected_files.append(filepaths)
+
         self.update_file_list()
 
+
     def update_file_list(self):
-        # Update the file list display
-        pass
+        self.file_list_container.clear_widgets()
+        for i, path in enumerate(self.selected_files):
+            entry = FileConvertHandle()
+            entry.entry_index = i
+            entry.convert_root = self
+            entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
+            self.file_list_container.add_widget(entry)
 
     def ask_output_folder(self):
         folder = filedialog.askdirectory(title="Vælg mappesti")
         return folder if folder else self.create_unique_output_folder(self.default_output_folder)
 
     def create_unique_output_folder(self, base_folder):
-        output_folder = os.path.join(base_folder, "KonverteredeFiler")
-        counter = 1
+        output_folder = os.path.join(base_folder, "PixelShifted") # Laver en mappe, hvis brugeren ikke vælger en
+        counter = 1  # Programmet navngiver filer, og starter med billede 1
         while os.path.exists(output_folder):
-            output_folder = os.path.join(base_folder, f"KonverteredeFiler_{counter}")
-            counter += 1
-        os.makedirs(output_folder)
+            output_folder = os.path.join(base_folder, f"PixelShifted_{counter}") # her navngives de
+            counter += 1 # og tæller op for hvert billede
+        os.makedirs(output_folder) # Opretter mappen
         return output_folder
 
-    def convert_files(self):
-        output_folder = self.ask_output_folder()
-        for file in self.selected_files:
-            if file.lower().endswith(('.jpg', '.jpeg', '.png', '.webp', '.avif')):
-                self.convert_image_to_png(file, output_folder)
-            elif file.lower().endswith('.txt'):
-                self.convert_txt_to_docx(file, output_folder)
-            elif file.lower().endswith('.docx'):
-                self.convert_docx_to_pdf(file, output_folder)
-            elif file.lower().endswith('.pptx'):
-                self.convert_pptx_to_pdf(file, output_folder)
-            elif file.lower().endswith('.pdf'):
-                self.convert_pdf_to_docx(file, output_folder)
+    def compress(self):
+        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
+            self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
+            return
 
-    def convert_image_to_png(self, image_path, output_folder):
-        img = Image.open(image_path)
-        png_path = os.path.join(output_folder, os.path.basename(image_path).replace(img.format.lower(), "png"))
-        img.save(png_path, "PNG")
-        self.status_label.text = f"Billede konverteret til PNG: {png_path}"
+        try:
+            self.converted_files = []
+            self.output_folder = self.ask_output_folder()
+            for path in self.selected_files:
+                if path.lower().endswith((".webp")):
+                    try:
+                        Open_img = Image.open(path)
+                        file_name_index = "Konverteret - " + Path(path).stem + ".png" # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        file_name_index_output = os.path.join(self.output_folder, file_name_index)
+                        Open_img.save(file_name_index_output)
+                        self.converted_files.append(file_name_index_output)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
 
-    def convert_txt_to_docx(self, txt_path, output_folder):
-        doc = Document()
-        with open(txt_path, 'r', encoding='utf-8') as file:
-            content = file.readlines()
-        for line in content:
-            doc.add_paragraph(line)
-        docx_path = os.path.join(output_folder, os.path.basename(txt_path).replace(".txt", ".docx"))
-        doc.save(docx_path)
-        self.status_label.text = f"TXT konverteret til DOCX: {docx_path}"
+                elif path.lower().endswith((".pdf")):
+                    try:
+                        output_name = f"Compressed - {os.path.basename(path)}"
+                        output_path = os.path.join(self.output_folder, output_name)
+                        args = [
+                            "gs",
+                            "-sDEVICE=pdfwrite",
+                            "-dCompatibilityLevel=1.4",
+                            "-dPDFSETTINGS=/prepress",
+                            "-dNOPAUSE",
+                            "-dQUIET",
+                            "-dBATCH",
+                            f"-sOutputFile={output_path}",
+                            path
+                        ]
+                        ghostscript.Ghostscript(*args)
+                        self.converted_files.append(output_path)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
 
-    def convert_docx_to_pdf(self, docx_path, output_folder):
-        pdf_path = os.path.join(output_folder, os.path.basename(docx_path).replace(".docx", ".pdf"))
-        subprocess.run(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", output_folder, docx_path])
-        self.status_label.text = f"DOCX konverteret til PDF: {pdf_path}"
-
-    def convert_pptx_to_pdf(self, pptx_path, output_folder):
-        pdf_path = os.path.join(output_folder, os.path.basename(pptx_path).replace(".pptx", ".pdf"))
-        subprocess.run(["libreoffice", "--headless", "--convert-to", "pdf", "--outdir", output_folder, pptx_path])
-        self.status_label.text = f"PPTX konverteret til PDF: {pdf_path}"
-
-    def convert_pdf_to_docx(self, pdf_path, output_folder):
-        docx_path = os.path.join(output_folder, os.path.basename(pdf_path).replace(".pdf", ".docx"))
-        subprocess.run(["libreoffice", "--headless", "--convert-to", "docx", "--outdir", output_folder, pdf_path])
-        self.status_label.text = f"PDF konverteret til DOCX: {docx_path}"
-
-
-
+        except Exception as e:
+            self.ids.status_label.text = f"Error: {str(e)}"
 
     def clear_list(self):
         self.selected_files = []
         self.update_file_list()
-    # Rydder listen
+        # Rydder listen
