@@ -14,8 +14,7 @@ import ghostscript
 
 class FileCompressHandle(Screen):
     Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
-                                      # hvis der bliver fortaget ændringer til filerne
-
+    compress_root = ObjectProperty()
 
 class FilKomprimering(Screen):
     file_list_container = ObjectProperty()
@@ -83,6 +82,7 @@ class FilKomprimering(Screen):
         for i, path in enumerate(self.selected_files):
             entry = FileCompressHandle()
             entry.entry_index = i
+            entry.compress_root = self
             entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
             self.file_list_container.add_widget(entry)
 
@@ -101,7 +101,7 @@ class FilKomprimering(Screen):
 
     def compress(self):
         if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
-            self.ids.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
+            self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
             return
 
         try:

@@ -9,7 +9,8 @@ import os
 
 class PDFNummer(Screen):
     Start_nummer = NumericProperty() # Lader Kivy automatisk opdaterer,
-                                     # hvis der bliver fortaget ændringer til filerne
+    merger_root = ObjectProperty()
+
 class PDF_Merging(Screen):
     pdf_list_container = ObjectProperty()
     status_label = ObjectProperty()
@@ -54,6 +55,7 @@ class PDF_Merging(Screen):
         for i, path in enumerate(self.selected_pdfs):
             entry = PDFNummer()
             entry.entry_index = i
+            entry.merger_root = self
             entry.ids.file_label.text = os.path.basename(path)
             self.pdf_list_container.add_widget(entry)
 
@@ -69,7 +71,7 @@ class PDF_Merging(Screen):
 
     def merge_pdfs(self):
         if len(self.selected_pdfs) < 2: # Sørger for, at der mindst er valgt to PDF filer
-            self.status_label.text = "Fejl: Vælg mindst 2 PDF filer!" # Hvis ikke, gives denne meddelelse
+            self.status_label.text = "Fejl: Vælg mindst to PDF filer!" # Hvis ikke, gives denne meddelelse
             return
 
         output_path = filedialog.asksaveasfilename(

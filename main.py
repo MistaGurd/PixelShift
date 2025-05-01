@@ -7,7 +7,7 @@ from kivymd.app import MDApp
 from BGfjernelse import PixelWipe
 from PDF_Merge import PDF_Merging
 from Filkompromering import FilKomprimering
-from Formatkonvertering import FormatConvert
+from Formatkonvertering import FileConvert
 
 # Overstående er import af de klasser, som hver Python fil har.
 # Hver klasse, er hver sin del (her en screen) af koden
@@ -28,7 +28,7 @@ class PixelShiftApp(MDApp):
         sm.add_widget(PixelWipe(name="bgfjern"))
         sm.add_widget(PDF_Merging(name="pdf_merger"))
         sm.add_widget(FilKomprimering(name="filecompress"))
-        sm.add_widget(FormatConvert(name="formatkonvert"))
+        sm.add_widget(FileConvert(name="formatkonvert"))
         sm.transition = NoTransition()
         return sm
 
