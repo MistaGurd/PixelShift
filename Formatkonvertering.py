@@ -117,6 +117,7 @@ class FormatKonverter(Screen):
 
 
 
+
 def clear_list(self):
     self.selected_files = []
     self.update_file_list()
