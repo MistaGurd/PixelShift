@@ -103,8 +103,9 @@
 
         BoxLayout:
             orientation: "vertical"
-            padding: 20
-            spacing: 10
+
+            Label: # Dummy label til spacing
+                size_hint_y: 7.2
 
             Label:
                 text: "Velkommen til PixelShift!"
@@ -115,6 +116,11 @@
                 text: "PixelShift er et program som kan..."
                 font_size: 20
                 color: 1,1,1,1
+                halign: "center"
+
+            Label: # Dummy label til spacing
+                size_hint_y: 7.2
+
 
 
 <PixelWipe>:
@@ -246,7 +252,7 @@
                         text: "Vælg en mappe"
                         on_release: root.select_folder()
                     Button:
-                        text: "Process"
+                        text: "Begynd baggrundsfjernelse"
                         on_release: root.start_processing()
 
 <PDF_Merging>:
