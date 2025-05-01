@@ -162,3 +162,12 @@ class FilKomprimering(Screen):
         self.selected_files = []
         self.update_file_list()
         # Rydder listen
+    def build(self):
+        sm = ScreenManager()
+        sm.add_widget(MainMenu(name="hovedmenu"))
+        sm.add_widget(BGFjern(name="bgfjern"))
+        sm.add_widget(PDF_Merging(name="pdf_merger"))
+        sm.add_widget(FilKomprimering(name="filecompress"))
+        #sm.add_widget(FormatKonverter(name="formatkonvert"))
+        sm.transition = NoTransition()
+        return sm

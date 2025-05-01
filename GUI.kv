@@ -1,88 +1,241 @@
+# Alt vedr. MDButton stammer fra https://kivymd.readthedocs.io/en/latest/components/button/index.html
+# Alle indbyggede ikoner kan findes her https://pictogrammers.com/library/mdi/
+
 <MainMenu>:
     name: 'hovedmenu'
     BoxLayout:
         orientation: 'horizontal'
 
         BoxLayout:
-            size_hint_x: .03
+            size_hint_x: 0.15
             padding: 10
             spacing: 10
             MDGridLayout:
                 rows: 5 # https://www.youtube.com/watch?v=7nHHfgOXK4I
-                pos_hint: {"top": 0.6} # https://kivy.org/doc/stable/api-kivy.uix.boxlayout.html#kivy.uix.boxlayout.BoxLayout
-
+                pos_hint: {"top": 0.7} # https://kivy.org/doc/stable/api-kivy.uix.boxlayout.html#kivy.uix.boxlayout.BoxLayout
                 spacing: 10
-
-                # https://www.youtube.com/watch?v=zl4wC2epUTA
-
-                MDIconButton:
-                    id: nav_icon0
-                    style: "filled"
-                    icon: "home"
-                    #ripple_scale: 1
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
                     on_release: root.manager.current = "hovedmenu"
-                MDIconButton:
-                    id: nav_icon1
-                    icon: "home"
-                    #ripple_scale: 0
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "home"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Hovedmenu"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
                     on_release: root.manager.current = "bgfjern"
-                MDIconButton:
-                    id: nav_icon2
-                    icon: "home"
-                    #ripple_scale: 0
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "eye-remove"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Cut-out"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
                     on_release: root.manager.current = "pdf_merger"
-                MDIconButton:
-                    id: nav_icon3
-                    icon: "home"
-                    #ripple_scale: 0
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "set-merge"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Merge"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
                     on_release: root.manager.current = "filecompress"
-                MDIconButton:
-                    id: nav_icon4
-                    icon: "home"
-                    #ripple_scale: 0
-                    on_release: root.manager.current = "filecompress"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "arrow-collapse-vertical"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Komprimering"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "formatkonvert"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "file-replace"
+                        padding: 10
+
+
+                    MDButtonText:
+                        id: text
+                        text: "Konverter"
+                        pos_hint: {"center_x": .5, "center_y": .5}
 
         Button:
             text: "Pls virk"
             on_release: root.manager.current = "filecompress"
             background_color: 0,1,0,1
 
-
-<PixelWipe>:
+<BGFjern>:
     name: 'bgfjern'
-    orientation: "vertical"
-
-    Label:
-        id: file_label
-        text: "Vælg et billede eller en mappe"
-        size_hint_y: 0.1
-
     BoxLayout:
-        size_hint_y: 0.4
-        Image:
-            id: before_image
-            source: ''
-        Image:
-            id: after_image
-            source: ''
+        orientation: 'horizontal'
 
-    ProgressBar:
-        id: progress
-        max: 100
-        value: 0
-        size_hint_y: 0.05
+        BoxLayout:
+            padding: 10
+            spacing: 10
+            MDGridLayout:
+                rows: 5 # https://www.youtube.com/watch?v=7nHHfgOXK4I
+                pos_hint: {"top": 0.7} # https://kivy.org/doc/stable/api-kivy.uix.boxlayout.html#kivy.uix.boxlayout.BoxLayout
+                spacing: 10
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "hovedmenu"
 
-    BoxLayout:
-        size_hint_y: 0.1
-        Button:
-            text: "Vælg et billede"
-            on_release: root.select_file()
-        Button:
-            text: "Vælg en mappe"
-            on_release: root.select_folder()
-        Button:
-            text: "Process"
-            on_release: root.start_processing()
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "home"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Hovedmenu"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "bgfjern"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "eye-remove"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Cut-out"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "pdf_merger"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "set-merge"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Merge"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "filecompress"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "arrow-collapse-vertical"
+                        padding: 10
+
+                    MDButtonText:
+                        id: text
+                        text: "Komprimering"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                MDButton:
+                    style: "tonal"
+                    theme_width: "Custom"
+                    height: "56dp"
+                    size_hint_x: .5
+                    on_release: root.manager.current = "formatkonvert"
+
+                    MDButtonIcon:
+                        x: text.x - (self.width + dp(10))
+                        icon: "file-replace"
+                        padding: 10
+
+
+                    MDButtonText:
+                        id: text
+                        text: "Konverter"
+                        pos_hint: {"center_x": .5, "center_y": .5}
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 7.2
+                Label:
+                    id: file_label
+                    text: "Vælg et billede eller en mappe"
+                    size_hint_y: 0.1
+
+                BoxLayout:
+                    size_hint_y: 0.4
+                    Image:
+                        id: before_image
+                        source: ''
+                    Image:
+                        id: after_image
+                        source: ''
+
+                ProgressBar:
+                    id: progress
+                    max: 100
+                    value: 0
+                    size_hint_y: 0.05
+
+                BoxLayout:
+                    size_hint_y: 0.1
+                    Button:
+                        text: "Vælg et billede"
+                        on_release: root.select_file()
+                    Button:
+                        text: "Vælg en mappe"
+                        on_release: root.select_folder()
+                    Button:
+                        text: "Process"
+                        on_release: root.start_processing()
 
 <PDF_Merging>:
     name: 'pdf_merger'
