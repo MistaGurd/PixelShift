@@ -12,7 +12,12 @@ from tkinter import filedialog
 
 from PIL import Image
 import pillow_avif
+from pdf2docx import Converter
+from docx2pdf import convert as d2pdfc # as d2pdfc for ikke at programmet ikke forveksler pdf2docx og docx2pdf
+
+
 from docx import Document
+
 
 
 
@@ -38,7 +43,7 @@ class FileConvert(Screen):
         Window.bind(on_dropfile=self.on_drop)
 
     def on_drop(self, window, file_path):
-        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".ppt",".odt")
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".odp",".odt")
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
         # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
 
@@ -58,14 +63,14 @@ class FileConvert(Screen):
     def file_select(self):
         filepaths = filedialog.askopenfilenames(
             title="Vælg mellem billeder, PDF, Docx, odt, pptx, ppt & txt",
-            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.pptx;*.ppt;*.docx;*.txt;*.odt*")]
+            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.pptx;*.odp;*.docx;*.txt;*.odt*")]
         )
         if filepaths:
             self.selected_files.extend(filepaths)
             self.update_file_list()
 
     def folder_select(self):
-        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".ppt",".odt")
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".odp",".odt")
         filepaths = filedialog.askdirectory()
 
         if os.path.isdir(filepaths):  # Hvis det er en mappe (dir for directory/mappe)
@@ -124,23 +129,42 @@ class FileConvert(Screen):
 
                 elif path.lower().endswith((".pdf")):
                     try:
-                        output_name = f"Compressed - {os.path.basename(path)}"
-                        output_path = os.path.join(self.output_folder, output_name)
-                        args = [
-                            "gs",
-                            "-sDEVICE=pdfwrite",
-                            "-dCompatibilityLevel=1.4",
-                            "-dPDFSETTINGS=/prepress",
-                            "-dNOPAUSE",
-                            "-dQUIET",
-                            "-dBATCH",
-                            f"-sOutputFile={output_path}",
-                            path
-                        ]
-                        ghostscript.Ghostscript(*args)
-                        self.converted_files.append(output_path)
+                        pdf = Converter(path) # https://pdf2docx.readthedocs.io/en/latest/quickstart.convert.html
+                        pdf_file_name_index = "Konverteret - " + Path(path).stem + ".docx"  # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        pdf_file_name_index_output = os.path.join(self.output_folder, pdf_file_name_index)
+                        pdf.convert(pdf_file_name_index_output)
+                        self.converted_files.append(pdf_file_name_index_output)
                     except Exception as e:
                         self.ids.status_label.text = f"Error: {str(e)}"
+
+                elif path.lower().endswith((".docx")):
+                    try:
+                        docx_file_name_index = "Konverteret - " + Path(path).stem + ".pdf"  # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        docx_file_name_index_output = os.path.join(self.output_folder, docx_file_name_index)
+                        d2pdfc(path, docx_file_name_index_output) # https://pypi.org/project/docx2pdf/
+                        self.converted_files.append(docx_file_name_index_output)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
+
+                elif path.lower().endswith((".pptx")):
+                    try:
+                        pptx_file_name_index = "Konverteret - " + Path(path).stem + ".pdf"  # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        pptx_file_name_index_output = os.path.join(self.output_folder, pptx_file_name_index)
+
+                        #presentation = Presentation()
+
+                        #presentation.LoadFromFile(path)
+
+                        #presentation.SaveToFile(pptx_file_name_index_output, FileFormat.PDF)
+                        #presentation.Dispose()
+
+                        self.converted_files.append(pptx_file_name_index_output)
+
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
+
+                self.ids.status_label.text = f"Succes: Alle filer konverteret!"
+
 
         except Exception as e:
             self.ids.status_label.text = f"Error: {str(e)}"
