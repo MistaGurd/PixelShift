@@ -8,7 +8,8 @@ from kivy.core.window import Window
 import tkinter as tk
 from tkinter import filedialog
 
-import PIL as pil
+from PIL import Image
+import pillow_avif
 import ghostscript
 
 class FileCompressHandle(Screen):
@@ -28,12 +29,16 @@ class FilKomprimering(Screen):
 
         self.selected_files = []
 
+        self.default_output_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+        self.output_folder = None
+
         Window.bind(on_dropfile=self.on_drop)
 
     def on_drop(self, window, file_path):
         formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif")
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
         # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
+
         if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
             files_in_dir = [
                 os.path.join(path, f)
@@ -78,35 +83,80 @@ class FilKomprimering(Screen):
         for i, path in enumerate(self.selected_files):
             entry = FileCompressHandle()
             entry.entry_index = i
-            entry.ids.file_label.text = f"{os.path.basename(path)} - fil str. {os.path.getsize(path)/1000000:.2f} MB"
+            entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
             self.file_list_container.add_widget(entry)
 
+    def ask_output_folder(self):
+        folder = filedialog.askdirectory(title="Vælg mappesti")
+        return folder if folder else self.create_unique_output_folder(self.default_output_folder)
+
+    def create_unique_output_folder(self, base_folder):
+        output_folder = os.path.join(base_folder, "PixelShifted") # Laver en mappe, hvis brugeren ikke vælger en
+        counter = 1  # Programmet navngiver filer, og starter med billede 1
+        while os.path.exists(output_folder):
+            output_folder = os.path.join(base_folder, f"PixelShifted_{counter}") # her navngives de
+            counter += 1 # og tæller op for hvert billede
+        os.makedirs(output_folder) # Opretter mappen
+        return output_folder
+
     def compress(self):
-        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt to PDF filer
-            self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
-            return
-
-        output_path = filedialog.asksaveasfilename(
-            title="Vælg destinationssti",
-            defaultextension=".pdf",
-            filetypes=[("PDF Files", "*.pdf")]
-        )
-
-        # Vha. tkinter kan destinationsstien vælges, inklusiv navn.
-        # Sørger selv for, at formattet bliver PDF
-        if not output_path:
+        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
+            self.ids.status_label.text = "Fejl: Vælg mindst 2 PDF filer!"  # Hvis ikke, gives denne meddelelse
             return
 
         try:
-            if self.selected_files.lower().endswith((".pdf")):
-                pass
+            self.compressed_files = []
+            raw_size = sum(os.path.getsize(path) for path in self.selected_files) / 1000000
+            self.output_folder = self.ask_output_folder()
+            formater = (".jpg", ".jpeg", ".png", ".webp",".avif")
+            for path in self.selected_files:
+                if path.lower().endswith(formater):
+                    try:
+                        Open_img = Image.open(path)
+                        width, height = Open_img.size
+                        new_width = int(width*0.75)
+                        new_height = int(height*0.75)
+                        resized_img = Open_img.resize((new_width,new_height))
 
-            elif self.selected_files.lower().endswith((".png", ".jpg", ".jpeg",".webp",".avif")):
-                pass
+                        file_name_index = "Compressed - " + os.path.basename(path)
+                        file_name_index_output = os.path.join(self.output_folder, file_name_index)
+
+                        resized_img.save(file_name_index_output)
+                        self.compressed_files.append(file_name_index_output)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
+
+                elif path.lower().endswith((".pdf")):
+                    try:
+                        output_name = f"Compressed - {os.path.basename(path)}"
+                        output_path = os.path.join(self.output_folder, output_name)
+                        args = [
+                            "gs",
+                            "-sDEVICE=pdfwrite",
+                            "-dCompatibilityLevel=1.4",
+                            "-dPDFSETTINGS=/prepress",
+                            "-dNOPAUSE",
+                            "-dQUIET",
+                            "-dBATCH",
+                            f"-sOutputFile={output_path}",
+                            path
+                        ]
+                        ghostscript.Ghostscript(*args)
+                        self.compressed_files.append(output_path)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
+
+        except Exception as e:
+            self.ids.status_label.text = f"Error: {str(e)}"
+
+        try:
+            compressed_size = sum(os.path.getsize(path) for path in self.compressed_files)/1000000
+            size_diff = raw_size-compressed_size
+            self.ids.status_label.text = f"Succes: Fil/filer reduceret med {size_diff:.2f} MB."
 
 
         except Exception as e:
-            self.status_label.text = f"Fejl: {str(e)}"  # Hvis fejl skulle opstå, kan brugeren her se, hvad der gik galt
+            self.ids.status_label.text = f"Error: {str(e)}"
 
     def clear_list(self):
         self.selected_files = []
