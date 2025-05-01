@@ -1,11 +1,7 @@
-from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, NoTransition
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivymd.app import MDApp
-
-import tkinter as tk
-
 
 # Diverse imports
 from BGfjernelse import PixelWipe
@@ -18,7 +14,6 @@ from Formatkonvertering import FormatConvert
 
 class MainMenu(Screen):
     pass
-
 
 class PixelShiftApp(MDApp):
 
