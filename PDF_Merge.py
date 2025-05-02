@@ -1,10 +1,14 @@
 from kivy.uix.screenmanager import Screen # Til screen manager i Main
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
-import PyPDF4
+from kivy.clock import Clock
+
+import pypdf
 import tkinter as tk
 from tkinter import filedialog # Windows dialog vindue
 import os
+
+from pypdf import PdfWriter
 
 
 class PDFNummer(Screen):
@@ -69,10 +73,17 @@ class PDF_Merging(Screen):
             self.selected_pdfs[index], self.selected_pdfs[index+1] = self.selected_pdfs[index+1], self.selected_pdfs[index]
             self.update_pdf_list()
 
-    def merge_pdfs(self):
+    def start_merging(self):
+        self.ids.status_label.color = (1, 0, 0, 1)
         if len(self.selected_pdfs) < 2: # Sørger for, at der mindst er valgt to PDF filer
             self.status_label.text = "Fejl: Vælg mindst to PDF filer!" # Hvis ikke, gives denne meddelelse
             return
+        self.ids.status_label.color = (0.5, 0.95, 0.4, 1)
+        self.ids.status_label.text = "Begynder behandling, vent venligst!"
+        Clock.schedule_once(lambda dt: self.merge_pdfs(), 0.1)
+
+    def merge_pdfs(self):
+
 
         output_path = filedialog.asksaveasfilename(
             title="Vælg destinationssti og navn til merged PDF",
@@ -85,18 +96,19 @@ class PDF_Merging(Screen):
             return
 
         try:
-            merger = PyPDF4.PdfFileMerger() # Variabel af PyPDF4
+            merger = PdfWriter() # Variabel af PyPDF4
             for pdf in self.selected_pdfs:
                 merger.append(pdf) # Appender de valgter PDF'er
             merger.write(output_path) # Gemmer den nye merged fil med write fra PyPDF4
             merger.close() # Rydder chachen
             self.status_label.color = (0.5, 0.95,0.4,1)
-            self.status_label.text = f"Success: Merged PDF gemt i {os.path.basename(output_path)}"
+            self.status_label.text = f"Success: Merged PDF gemt som {os.path.basename(output_path)}"
             self.selected_pdfs = []
             self.update_pdf_list()
             # Sørger automatisk for at ryde listen når PDFer er blevet merged
             # Klar til brug igen, med det samme!
         except Exception as e:
+            self.status_label.color: (1,0,0,1)
             self.status_label.text = f"Fejl: {str(e)}" # Hvis fejl skulle opstå, kan brugeren her se, hvad der gik galt
 
     def clear_list(self):

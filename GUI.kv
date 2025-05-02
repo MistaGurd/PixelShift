@@ -391,7 +391,7 @@
                     spacing: 10
                     Button:
                         text: 'Merge'
-                        on_release: root.merge_pdfs()
+                        on_release: root.start_merging()
                     Button:
                         text: 'Ryd liste'
                         on_release: root.clear_list()
@@ -399,9 +399,10 @@
                 Label:
                     id: status_label
                     color:
+                    font_size: 20
                     text: ''
                     size_hint_y: None
-                    height: 30 # ændre til 50
+                    height: 50
 
 <PDFNummer>:
     size_hint_y: None
@@ -579,7 +580,7 @@
                     spacing: 10
                     Button:
                         text: 'Komprimere'
-                        on_release: root.compress()
+                        on_release: root.start_compressing()
                     Button:
                         text: 'Ryd liste'
                         on_release: root.clear_list()
@@ -587,6 +588,7 @@
                 Label:
                     id: status_label
                     color:
+                    font_size: 20
                     text: ''
                     size_hint_y: None
                     height: 50
@@ -771,6 +773,7 @@
                 Label:
                     id: status_label
                     color:
+                    font_size: 20
                     text: ''
                     size_hint_y: None
                     height: 50

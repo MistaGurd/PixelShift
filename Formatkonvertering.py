@@ -109,20 +109,15 @@ class FileConvert(Screen):
 
 
     def start_converting(self):
-        if self.selected_files == []:
-            self.ids.status_label.text: "Fejl:..."
-            return
-
-        elif self.selected_files != []:
-            threading.Thread(target=self.convert, daemon=True).start()
-        self.ids.status_label.text = "Begynder"
-        #Clock.schedule_once(lambda dt: setattr(self.ids.status_label, 'text', "Begynder behandling"), 0)
-    def convert(self):
-        self.ids.status_label.color = 1,0,0,1
+        self.ids.status_label.color = (1, 0, 0, 1)
         if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
             self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
             return
+        self.ids.status_label.color = (0.5, 0.95, 0.4, 1)
+        self.ids.status_label.text = "Begynder behandling, vent venligst!"
+        Clock.schedule_once(lambda dt: self.convert(), 0.1)
 
+    def convert(self):
         try:
             self.converted_files = []
             self.output_folder = self.ask_output_folder()
@@ -182,6 +177,8 @@ class FileConvert(Screen):
 
                 self.ids.status_label.color = (0.5, 0.95, 0.4, 1)
                 self.ids.status_label.text = f"Succes: Alle filer konverteret!"
+                self.selected_files = []
+                self.update_file_list()
 
 
         except Exception as e:

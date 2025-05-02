@@ -4,6 +4,8 @@ import locale
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
+from kivy.clock import Clock
+
 
 import tkinter as tk
 from tkinter import filedialog
@@ -99,6 +101,15 @@ class FilKomprimering(Screen):
         os.makedirs(output_folder) # Opretter mappen
         return output_folder
 
+    def start_compressing(self):
+        self.ids.status_label.color = (1, 0, 0, 1)
+        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
+            self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
+            return
+        self.ids.status_label.color = (0.5, 0.95, 0.4, 1)
+        self.ids.status_label.text = "Begynder behandling, vent venligst!"
+        Clock.schedule_once(lambda dt: self.compress(), 0.1)
+
     def compress(self):
         if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
             self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
@@ -156,6 +167,8 @@ class FilKomprimering(Screen):
             size_diff = raw_size-compressed_size
             self.ids.status_label.color = (0.5, 0.95,0.4,1)
             self.ids.status_label.text = f"Succes: Fil/filer reduceret med {size_diff:.2f} MB."
+            self.selected_files = []
+            self.update_file_list()
 
 
         except Exception as e:
