@@ -440,7 +440,7 @@
 
 <FilKomprimering>:
     name: 'filecompress'
-    file_list_container: file_list_container
+    compress_file_list_container: compress_file_list_container
     BoxLayout:
         orientation: 'horizontal'
 
@@ -568,7 +568,7 @@
                 ScrollView:
                     size_hint: (1, 0.6)
                     GridLayout:
-                        id: file_list_container
+                        id: compress_file_list_container
                         cols: 1
                         size_hint_y: None
                         height: self.minimum_height
@@ -617,7 +617,7 @@
 
 <FileConvert>:
     name: 'formatkonvert'
-    file_list_container: file_list_container
+    format_file_list_container: format_file_list_container
     BoxLayout:
         orientation: 'horizontal'
 
@@ -753,7 +753,7 @@
                 ScrollView:
                     size_hint: (1, 0.6)
                     GridLayout:
-                        id: file_list_container
+                        id: format_file_list_container
                         cols: 1
                         size_hint_y: None
                         height: self.minimum_height

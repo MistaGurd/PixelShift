@@ -19,7 +19,7 @@ class FileCompressHandle(Screen):
     compress_root = ObjectProperty()
 
 class FilKomprimering(Screen):
-    file_list_container = ObjectProperty()
+    compress_file_list_container = ObjectProperty()
     status_label = ObjectProperty()
 
     def __init__(self, **kwargs):
@@ -80,13 +80,13 @@ class FilKomprimering(Screen):
 
 
     def update_file_list(self):
-        self.file_list_container.clear_widgets()
+        self.compress_file_list_container.clear_widgets()
         for i, path in enumerate(self.selected_files):
             entry = FileCompressHandle()
             entry.entry_index = i
             entry.compress_root = self
             entry.ids.file_label.text = f"{os.path.basename(path)} - {os.path.getsize(path)/1000000:.2f} MB"
-            self.file_list_container.add_widget(entry)
+            self.compress_file_list_container.add_widget(entry)
 
     def ask_output_folder(self):
         folder = filedialog.askdirectory(title="Vælg mappesti")
