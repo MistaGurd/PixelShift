@@ -14,9 +14,9 @@ from PIL import Image
 import pillow_avif
 from pdf2docx import Converter
 from docx2pdf import convert as d2pdfc # as d2pdfc for ikke at programmet ikke forveksler pdf2docx og docx2pdf
-
+from txt2docx import txt2docx
+from odt_pdf.odt_to_pdf import convert_odt_to_pdf
 from docx import Document
-
 
 class FileConvertHandle(Screen):
     Start_nummer = NumericProperty()  # Lader Kivy automatisk opdaterer,
@@ -40,7 +40,7 @@ class FileConvert(Screen):
         Window.bind(on_dropfile=self.on_drop)
 
     def on_drop(self, window, file_path):
-        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".odp",".odt")
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".txt")
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
         # et input i bytes, derfor decoder vi med utf-8 fra str til bytes
 
@@ -60,14 +60,14 @@ class FileConvert(Screen):
     def file_select(self):
         filepaths = filedialog.askopenfilenames(
             title="Vælg mellem billeder, PDF, Docx, odt, pptx, ppt & txt",
-            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.pptx;*.odp;*.docx;*.txt;*.odt*")]
+            filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.docx;*.txt;*")]
         )
         if filepaths:
             self.selected_files.extend(filepaths)
             self.update_file_list()
 
     def folder_select(self):
-        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".pptx",".txt",".odp",".odt")
+        formater = (".pdf",".jpg",".jpeg",".png",".webp",".avif",".docx",".txt")
         filepaths = filedialog.askdirectory()
 
         if os.path.isdir(filepaths):  # Hvis det er en mappe (dir for directory/mappe)
@@ -143,19 +143,14 @@ class FileConvert(Screen):
                     except Exception as e:
                         self.ids.status_label.text = f"Error: {str(e)}"
 
-                elif path.lower().endswith((".pptx")):
+                elif path.lower().endswith((".txt")):
                     try:
-                        pptx_file_name_index = "Konverteret - " + Path(path).stem + ".pdf"  # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
-                        pptx_file_name_index_output = os.path.join(self.output_folder, pptx_file_name_index)
+                        txt_file_name_index = "Konverteret - " + Path(path).stem + ".docx"  # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        txt_file_name_index_output = os.path.join(self.output_folder, txt_file_name_index)
 
-                        #presentation = Presentation()
+                        txt2docx.txt2docx(path,txt_file_name_index_output)
 
-                        #presentation.LoadFromFile(path)
-
-                        #presentation.SaveToFile(pptx_file_name_index_output, FileFormat.PDF)
-                        #presentation.Dispose()
-
-                        self.converted_files.append(pptx_file_name_index_output)
+                        self.converted_files.append(txt_file_name_index_output)
 
                     except Exception as e:
                         self.ids.status_label.text = f"Error: {str(e)}"
