@@ -90,6 +90,7 @@ class PDF_Merging(Screen):
                 merger.append(pdf) # Appender de valgter PDF'er
             merger.write(output_path) # Gemmer den nye merged fil med write fra PyPDF4
             merger.close() # Rydder chachen
+            self.status_label.color = (0.5, 0.95,0.4,1)
             self.status_label.text = f"Success: Merged PDF gemt i {os.path.basename(output_path)}"
             self.selected_pdfs = []
             self.update_pdf_list()

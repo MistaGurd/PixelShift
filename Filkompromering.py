@@ -113,6 +113,7 @@ class FilKomprimering(Screen):
                 if path.lower().endswith(formater):
                     try:
                         Open_img = Image.open(path)
+                        self.ids.status_label.text = f"Behandler {os.path.basename(Open_img)}."
                         width, height = Open_img.size
                         new_width = int(width*0.75)
                         new_height = int(height*0.75)
@@ -127,6 +128,7 @@ class FilKomprimering(Screen):
                         self.ids.status_label.text = f"Error: {str(e)}"
 
                 elif path.lower().endswith((".pdf")):
+                    self.ids.status_label.text = f"Behandler {os.path.basename(path)}."
                     try:
                         output_name = f"Compressed - {os.path.basename(path)}"
                         output_path = os.path.join(self.output_folder, output_name)
@@ -152,6 +154,7 @@ class FilKomprimering(Screen):
         try:
             compressed_size = sum(os.path.getsize(path) for path in self.compressed_files)/1000000
             size_diff = raw_size-compressed_size
+            self.ids.status_label.color = (0.5, 0.95,0.4,1)
             self.ids.status_label.text = f"Succes: Fil/filer reduceret med {size_diff:.2f} MB."
 
 

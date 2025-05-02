@@ -1,9 +1,11 @@
 import os
 import locale
+import threading
 
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
+from kivy.clock import Clock
 
 from pathlib import Path
 
@@ -105,7 +107,18 @@ class FileConvert(Screen):
         os.makedirs(output_folder) # Opretter mappen
         return output_folder
 
-    def compress(self):
+
+    def start_converting(self):
+        if self.selected_files == []:
+            self.ids.status_label.text: "Fejl:..."
+            return
+
+        elif self.selected_files != []:
+            threading.Thread(target=self.convert, daemon=True).start()
+        self.ids.status_label.text = "Begynder"
+        #Clock.schedule_once(lambda dt: setattr(self.ids.status_label, 'text', "Begynder behandling"), 0)
+    def convert(self):
+        self.ids.status_label.color = 1,0,0,1
         if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
             self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
             return
@@ -164,8 +177,10 @@ class FileConvert(Screen):
                         self.converted_files.append(txt_file_name_index_output)
 
                     except Exception as e:
+                        self.ids.status_label.color = (1, 0, 0, 1)
                         self.ids.status_label.text = f"Error: {str(e)}"
 
+                self.ids.status_label.color = (0.5, 0.95, 0.4, 1)
                 self.ids.status_label.text = f"Succes: Alle filer konverteret!"
 
 
