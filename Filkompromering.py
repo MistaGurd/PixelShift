@@ -161,4 +161,5 @@ class FilKomprimering(Screen):
     def clear_list(self):
         self.selected_files = []
         self.update_file_list()
+        self.ids.status_label.text = f""
         # Rydder listen

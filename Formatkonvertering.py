@@ -114,7 +114,7 @@ class FileConvert(Screen):
             self.converted_files = []
             self.output_folder = self.ask_output_folder()
             for path in self.selected_files:
-                if path.lower().endswith((".webp")):
+                if path.lower().endswith((".jpg",".jpeg",".webp",".avif")):
                     try:
                         Open_img = Image.open(path)
                         file_name_index = "Konverteret - " + Path(path).stem + ".png" # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
@@ -123,6 +123,17 @@ class FileConvert(Screen):
                         self.converted_files.append(file_name_index_output)
                     except Exception as e:
                         self.ids.status_label.text = f"Error: {str(e)}"
+
+                elif path.lower().endswith((".png")):
+                    try:
+                        Open_img = Image.open(path)
+                        png_file_name_index = "Konverteret - " + Path(path).stem + ".jpg" # https://stackoverflow.com/questions/678236/how-do-i-get-the-filename-without-the-extension-from-a-path-in-python#47496703
+                        png_file_name_index_output = os.path.join(self.output_folder, png_file_name_index)
+                        Open_img.save(png_file_name_index_output)
+                        self.converted_files.append(png_file_name_index_output)
+                    except Exception as e:
+                        self.ids.status_label.text = f"Error: {str(e)}"
+
 
                 elif path.lower().endswith((".pdf")):
                     try:
@@ -164,4 +175,5 @@ class FileConvert(Screen):
     def clear_list(self):
         self.selected_files = []
         self.update_file_list()
+        self.ids.status_label.text = f""
         # Rydder listen

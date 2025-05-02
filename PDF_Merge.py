@@ -101,4 +101,5 @@ class PDF_Merging(Screen):
     def clear_list(self):
         self.selected_pdfs = []
         self.update_pdf_list()
+        self.ids.status_label.text = f""
         # Rydder listen
