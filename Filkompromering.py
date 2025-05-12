@@ -73,8 +73,6 @@ class FilKomprimering(Screen):
                 if f.lower().endswith(formater)
             ]
             self.selected_files.extend(files_in_dir)
-        elif filepaths.lower().endswith(formater):  # Hvis det er en enkel fil i følgende format
-            self.selected_files.append(filepaths)
 
         self.update_file_list()
 
