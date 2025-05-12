@@ -3,7 +3,6 @@ from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
 from kivy.clock import Clock
 
-import pypdf
 import tkinter as tk
 from tkinter import filedialog # Windows dialog vindue
 import os
