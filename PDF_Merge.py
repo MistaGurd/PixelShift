@@ -56,6 +56,7 @@ class PDF_Merging(Screen):
     def update_pdf_list(self):
         self.pdf_list_container.clear_widgets()
         for i, path in enumerate(self.selected_pdfs):
+            print(i, path)
             entry = PDFNummer()
             entry.entry_index = i
             entry.merger_root = self
@@ -66,6 +67,7 @@ class PDF_Merging(Screen):
         if index > 0:
             self.selected_pdfs[index], self.selected_pdfs[index-1] = self.selected_pdfs[index-1], self.selected_pdfs[index]
             self.update_pdf_list()
+
 
     def move_down(self, index):
         if index < len(self.selected_pdfs) - 1:
@@ -82,8 +84,6 @@ class PDF_Merging(Screen):
         Clock.schedule_once(lambda dt: self.merge_pdfs(), 0.1)
 
     def merge_pdfs(self):
-
-
         output_path = filedialog.asksaveasfilename(
             title="Vælg destinationssti og navn til merged PDF",
             defaultextension=".pdf",

@@ -40,11 +40,9 @@ class PixelWipe(Screen): # Hovedklasse, som matcher med klassen i kivy koden
         Window.bind(on_dropfile=self.on_drop)  # Når filer bliver drag & dropped, skal det køre on_drop metoden
 
     def on_drop(self, window, file_path):  # Metode, som håndterer drag-and-drop
-        print(file_path)
         path = file_path.decode("utf-8")  # Når man drag and dropper vil Kivy gerne have
         # et input som en streng, derfor decoder vi med utf-8 fra byte til string
 
-        print(path)
         if os.path.isdir(path):  # Hvis det er en mappe (dir for directory/mappe)
             self.selected_path = path
             self.update_file_info(self.selected_path,
