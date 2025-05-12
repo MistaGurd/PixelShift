@@ -111,10 +111,6 @@ class FilKomprimering(Screen):
         Clock.schedule_once(lambda dt: self.compress(), 0.1)
 
     def compress(self):
-        if len(self.selected_files) < 1:  # Sørger for, at der mindst er valgt én fil
-            self.ids.status_label.text = "Fejl: Vælg mindst én fil!"  # Hvis ikke, gives denne meddelelse
-            return
-
         try:
             self.compressed_files = []
             raw_size = sum(os.path.getsize(path) for path in self.selected_files) / 1000000
