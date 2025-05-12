@@ -17,7 +17,6 @@ import pillow_avif
 from pdf2docx import Converter
 from docx2pdf import convert as d2pdfc # as d2pdfc for ikke at programmet ikke forveksler pdf2docx og docx2pdf
 from txt2docx import txt2docx
-from odt_pdf.odt_to_pdf import convert_odt_to_pdf
 from docx import Document
 
 class FileConvertHandle(Screen):
@@ -61,7 +60,7 @@ class FileConvert(Screen):
 
     def file_select(self):
         filepaths = filedialog.askopenfilenames(
-            title="Vælg mellem billeder, PDF, Docx, odt, pptx, ppt & txt",
+            title="Vælg mellem billeder, PDF, Docx, & txt",
             filetypes=[("Formater", "*.png;*.jpg;*.jpeg;*.webp;*.avif;*.pdf;*.docx;*.txt;*")]
         )
         if filepaths:
