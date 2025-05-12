@@ -1,7 +1,6 @@
 import os
 #import locale
 
-
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ObjectProperty, NumericProperty
 from kivy.core.window import Window
