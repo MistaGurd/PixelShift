@@ -106,7 +106,7 @@
             orientation: "vertical"
 
             Label: # Dummy label til spacing
-                size_hint_y: 5
+                size_hint_y: 4
 
             Label:
                 text: "Velkommen til PixelShift!"
@@ -117,12 +117,12 @@
             Label:
                 text: "Et program, lavet til at løse diverse problemer med filhåndteringen i hverdagen.\nPåstår Lectio, at din PDF fylder for meget? Det kan PixelShift fixe. Eller hvad med et PNG billede,\n hvor baggrunden ikke var gennemsigtig alligevel? \nMange cases, hvor PixelShift kan gøre dit workflow bedre!"
                 size_hint_x: 0.85
-                font_size: 20
+                font_size: 30
                 color: 1,1,1,1
                 halign: "center"
 
             Label: # Dummy label til spacing
-                size_hint_y: 5
+                size_hint_y: 4
 
 
 
@@ -227,9 +227,16 @@
                 orientation: 'vertical'
                 size_hint_x: 7.2
                 Label:
+                    id: screen_name
+                    text: "Baggrundsfjernelse"
+                    font_size: 24
+                    size_hint_y: None
+                    height: 50
+
+                Label:
                     id: file_label
                     text: "Vælg et billede eller en mappe"
-                    size_hint_y: 0.1
+                    size_hint_y: 0.05
 
                 BoxLayout:
                     size_hint_y: 0.4
