@@ -147,8 +147,7 @@ class PixelWipe(Screen): # Hovedklasse, som matcher med klassen i kivy koden
 
             output_img = remove(input_img)  # .remove stammer fra rembg, og gemmer her billedet uden baggrund.
 
-            output_filename = os.path.splitext(os.path.basename(image_path))[
-                                  0] + "_ingen_baggrund.png"  # Tager det originale filnavn, og tilføjer "ingen_baggrund"
+            output_filename = os.path.splitext(os.path.basename(image_path))[0] + "_ingen_baggrund.png"  # Tager det originale filnavn, og tilføjer "ingen_baggrund"
             output_path = os.path.join(self.output_folder, output_filename)  # Sørger for at ligge det i outputstien
 
             output_img.save(output_path, format="PNG")  # Gemmer i PNG filformat med .save fra Pillow

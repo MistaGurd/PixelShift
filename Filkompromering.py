@@ -118,17 +118,19 @@ class FilKomprimering(Screen):
                 if path.lower().endswith(formater):
                     try:
                         Open_img = Image.open(path)
-                        self.ids.status_label.text = f"Behandler {os.path.basename(Open_img)}."
+                        self.ids.status_label.text = f"Behandler {os.path.basename(path)}."
                         width, height = Open_img.size
                         new_width = int(width*0.75)
                         new_height = int(height*0.75)
                         resized_img = Open_img.resize((new_width,new_height))
 
                         file_name_index = "Compressed - " + os.path.basename(path)
+                        print(os.path.basename(path))
                         file_name_index_output = os.path.join(self.output_folder, file_name_index)
 
                         resized_img.save(file_name_index_output)
                         self.compressed_files.append(file_name_index_output)
+
                     except Exception as e:
                         self.ids.status_label.text = f"Error: {str(e)}"
 
