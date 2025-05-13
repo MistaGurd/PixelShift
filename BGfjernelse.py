@@ -35,8 +35,6 @@ class PixelWipe(Screen): # Hovedklasse, som matcher med klassen i kivy koden
         self.tk_root.withdraw()
         # ^ Lader os anvende tkinter med Stifinder uden tk-pop-up vinduer
 
-        self.threads = []
-
         Window.bind(on_dropfile=self.on_drop)  # Når filer bliver drag & dropped, skal det køre on_drop metoden
 
     def on_drop(self, window, file_path):  # Metode, som håndterer drag-and-drop
