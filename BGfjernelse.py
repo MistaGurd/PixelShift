@@ -150,18 +150,15 @@ class PixelWipe(Screen): # Hovedklasse, som matcher med klassen i kivy koden
 
             output_img.save(output_path, format="PNG")  # Gemmer i PNG filformat med .save fra Pillow
 
-            self.show_image(image_path,
-                            self.ids.before_image)  # Opdaterer show_image widget i Kivy til at være billedet før behandling
-            self.show_image(output_path,
-                            self.ids.after_image)  # Opdaterer show_image widget i Kivy til at være billedet efter behandling
+            self.show_image(image_path, self.ids.before_image)  # Opdaterer show_image widget i Kivy til at være billedet før behandling
+            self.show_image(output_path, self.ids.after_image)  # Opdaterer show_image widget i Kivy til at være billedet efter behandling
 
             Clock.schedule_once(lambda dt: self.update_file_info(image_path, output_path), 0)
             # Når programmet er færdig med at behandle et billede, opdaterer den update_file_info
 
         except Exception as error:  # Hvis en fejl forekommer
             error_message = f"Error: {str(error)}"  # Udskriver programmet Error... også fejlen
-            Clock.schedule_once(lambda dt: setattr(self.ids.file_label, 'text', error_message),
-                                0)  # Opdaterer ids.file_label til at vise fejlbeskeden
+            Clock.schedule_once(lambda dt: setattr(self.ids.file_label, 'text', error_message),  0)  # Opdaterer ids.file_label til at vise fejlbeskeden
 
     def process_folder(self):
         try:

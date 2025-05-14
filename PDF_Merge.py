@@ -95,7 +95,7 @@ class PDF_Merging(Screen):
             return
 
         try:
-            merger = PdfWriter() # Variabel af PyPDF4
+            merger = PdfWriter() # Variabel af PyPDF
             for pdf in self.selected_pdfs:
                 merger.append(pdf) # Appender de valgter PDF'er
             merger.write(output_path) # Gemmer den nye merged fil med write fra PyPDF4
